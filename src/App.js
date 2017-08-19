@@ -1,7 +1,21 @@
 import React, { Component } from 'react';
-import Button from 'antd/lib/button'
+import { BrowserRouter as Router, Route , Link} from 'react-router-dom'
+import { Home ,HomeWork } from './pages'
+import {Button} from 'antd'
 import logo from './logo.svg';
 import './App.css';
+
+
+const About = () => (
+  <div>
+    <h2>About</h2>
+  </div>
+)
+const Topic = ({ match }) => (
+  <div>
+    <h3>{match.params.topicId}</h3>
+  </div>
+)
 
 
 class App extends Component {
@@ -15,6 +29,10 @@ class App extends Component {
         <p className="App-intro">
           <Button type="primary">我是按钮</Button>
         </p>
+        <HomeWork />
+        <Router>
+          <Route path="/" component={Home}></Route>
+        </Router>
       </div>
     );
   }
