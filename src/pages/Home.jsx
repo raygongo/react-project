@@ -1,92 +1,68 @@
 import React, { Component } from 'react';
+import {
+    BrowserRouter as Router,
+    Route,
+    Switch,
+    Link
+} from 'react-router-dom'
+import {  HomeWork , Comment } from '../pages/' 
 
+import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+const { SubMenu } = Menu;
+const { Content, Sider } = Layout;
 
-class Dog extends Component {
-
-	static defaultProps = {
-		onClick (){
-			console.log('我是默认的点击事件')
-		}
-	}
-	constructor() {
-		super()
-		/* TODO */
-		this.state = {
-			running: false
-		}
-	}
-
-	bark() {
-		/* TODO */
-		this.setState({
-			running: false
-		})
-	}
-
-	run() {
-		this.setState({
-			running: true
-		})
-	}
-
-	handelClickDog() {
-		if (!this.state.running) {
-			this.run()
-			setTimeout(() => {
-				this.bark()
-			}, 1000)
-		}
-		if (this.props.onClick) {
-			this.props.onClick()
-		}
-	}
-
-	render() {
-		return (
-			<div> 
-				<span onClick={this.handelClickDog.bind(this)} > Dog</span>   
-				{this.state.running ? 'running~~~' : null}
-				我是父组件传进来的属性{this.props.text}
-			</div>
-		)
-	}
+export default class Home extends Component {
+    render() {
+        return (
+                <Layout>
+                <Sider width={200} style={{ background: '#fff' }}>
+                    <Menu
+                        mode="inline"
+                        defaultSelectedKeys={['1']}
+                        defaultOpenKeys={['sub1']}
+                        style={{ height: '100%', borderRight: 0 }}
+                    >
+                        <SubMenu key="sub1" title={<span><Icon type="user" />subnav 1</span>}>
+                            <Menu.Item key="1">
+                                <Link to="/home/">React</Link>    
+                            </Menu.Item>
+                            <Menu.Item key="2">
+                                <Link to="/home/angular">Angular</Link>
+                            </Menu.Item>
+                            <Menu.Item key="3">
+                                <Link to="/home/vue">Vue</Link>
+                            </Menu.Item>
+                            <Menu.Item key="4">option4</Menu.Item>
+                        </SubMenu>
+                        <SubMenu key="sub2" title={<span><Icon type="laptop" />subnav 2</span>}>
+                            <Menu.Item key="5">option5</Menu.Item>
+                            <Menu.Item key="6">option6</Menu.Item>
+                            <Menu.Item key="7">option7</Menu.Item>
+                            <Menu.Item key="8">option8</Menu.Item>
+                        </SubMenu>
+                        <SubMenu key="sub3" title={<span><Icon type="notification" />subnav 3</span>}>
+                            <Menu.Item key="9">option9</Menu.Item>
+                            <Menu.Item key="10">option10</Menu.Item>
+                            <Menu.Item key="11">option11</Menu.Item>
+                            <Menu.Item key="12">option12</Menu.Item>
+                        </SubMenu>
+                    </Menu>
+                </Sider>
+                <Layout style={{ padding: '0 24px 24px' }}>
+                    <Breadcrumb style={{ margin: '12px 0' }}>
+                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item>List</Breadcrumb.Item>
+                        <Breadcrumb.Item>App</Breadcrumb.Item>
+                    </Breadcrumb>
+                    <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
+                        <Switch>
+                            <Route exact path='/home/' component={HomeWork}/>
+                            <Route path='/home/vue' component={Comment}/>
+                        </Switch>    
+                    </Content>
+                </Layout>
+            </Layout>
+        );
+    }
 }
 
-
-class Home extends Component {
-	constructor() {
-		super()
-		this.state = {
-			isLike: false,
-			text:'你好'
-		}
-	}
-	// 标签就是字符串
-	showDom(dom) {
-		return dom
-	}
-	handelClick() {
-		this.setState((pre) => {
-			return { isLike: !pre.isLike }
-		})
-	}
-	changeState () {
-		this.setState({
-			text: new Date().getTime()
-		})
-	}
-	render() {
-		const msg = true
-		return (
-			<div>
-				<div onClick={this.handelClick.bind(this)}>点我</div>
-				{this.state.isLike ? '对' : '错'}
-				<div>{this.showDom(<span>我是饶了一圈的span标签</span>)}</div>
-				<Dog text={this.state.text} />
-				<button onClick={this.changeState.bind(this)}>点我更改状态</button>
-			</div>
-		)
-	}
-}
-
-export default Home
