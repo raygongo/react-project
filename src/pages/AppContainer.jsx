@@ -1,4 +1,4 @@
-import React, { Component ,PropTypes } from 'react';
+import React, { Component  } from 'react';
 import PC from '../components/PC'
 
 import {default as http} from '../ajax'

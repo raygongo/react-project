@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route , Link} from 'react-router-dom'
 import { AppContainer } from './pages'
-import './styles/App.less'
-import './styles/AppContainer.less'
+import '@/styles/App.less'
+import '@/styles/AppContainer.less'
 
 class App extends Component {
   render() {
