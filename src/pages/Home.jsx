@@ -5,7 +5,7 @@ import {
     Switch,
     Link
 } from 'react-router-dom'
-import {  HomeWork , Comment } from '../pages/' 
+import {  HomeWork , Comment , BookCase} from '../pages/' 
 
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 const { SubMenu } = Menu;
@@ -56,8 +56,9 @@ export default class Home extends Component {
                     </Breadcrumb>
                     <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
                         <Switch>
-                            <Route exact path='/home/' component={HomeWork}/>
+                            <Route exact path='/home/' component={BookCase}/>
                             <Route path='/home/vue' component={Comment}/>
+                            <Route path='/home/angular' component={HomeWork}/>
                         </Switch>    
                     </Content>
                 </Layout>

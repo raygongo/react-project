@@ -7,6 +7,7 @@ import RouterConfig from './routes'
 import {Button} from 'antd'
 import logo from './logo.svg';
 import './styles/App.less'
+import './styles/BookCase.less'
 
 class App extends Component {
   render() {
