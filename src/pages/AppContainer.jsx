@@ -38,15 +38,13 @@ export default class AppContainer extends Component {
                         activeIndex="single"
                         onChange={this.handelMenuChange}
                         checked="single">
-                        <Menu text="单页模式" index="single" />
-                        <Menu text="列表模式" index="list" />
-                        <Menu text="网格模式一" index="grid1" />
-                        <Menu text="网格模式二" index="grid2" />
-
+                        <Menu text="单页模式" index="single"/>
+                        <Menu text="列表模式" index="list"/>
+                        <Menu text="网格模式一" index="grid1"/>
+                        <Menu text="网格模式二" index="grid2"/>
                     </MenuList>
-                    <StatusBar />
-
-                    <StatusModelList />
+                    <StatusBar/>
+                    <StatusModelList/>
                 </TabPane>
                 {/* 移动端 */}
                 <TabPane
@@ -67,4 +65,4 @@ export default class AppContainer extends Component {
             </Tabs>
         )
     }
-};
+}
