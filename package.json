@@ -2,10 +2,10 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://raygongo.github.io/react-project/",
   "dependencies": {
     "antd": "^2.12.3",
     "autoprefixer": "7.1.1",
+    "axios": "^0.16.2",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",

@@ -1,8 +1,17 @@
 import React, { Component ,PropTypes } from 'react';
 import PC from '../components/PC'
+
+import {default as http} from '../ajax'
+
 let classnames = require('classnames')
 
-export default class BookCase extends Component {
+
+
+export default class AppContainer extends Component {
+
+    componentDidMount () {
+        // 发送请求获取数据
+    }
     
     render () {
         return (
