@@ -2,8 +2,8 @@
 @baseColor:#5987e4;//#2ECF38
 
 .ui-tabs-ray{
-    // height: 100% ;
-    flex: 600px;
+    height: 790px ;
+    // flex: 790px;
 
     .tabs-nav{
         overflow: hidden;
@@ -32,9 +32,9 @@
         }
     }
     .tabs-content{
-        
+        height: e("calc(100% - 50px)");
         .tabs-panel{
-            height: 550px;
+            height: 100%;
             display: none;
         }
         .tabs-active{
@@ -112,8 +112,7 @@
 
     .model-content{
         overflow: hidden;
-        height: 240px;
-        // background: red;
+        height: 100%;
 
         .edit-btn-info{
             text-align: right;
@@ -132,23 +131,71 @@
             margin-top:55px; 
 
             .model-info-line{
-                width: 75%;
                 margin-top: 10px;
             }
-
+            .model-url{
+                display: inline-block;
+                vertical-align: middle;
+                width: 60%;
+                margin-left: 20px;
+                input{
+                    outline: none;
+                    padding: 6px 5px;
+                    border: @splitLine;
+                }
+            }
             .model-label{
                 text-align: right;
                 width: 100px;
                 display: inline-block;
                 vertical-align: top;
+                margin-top: 8px;
             }
 
             .model-detail{
                 display: inline-block;
+                width: 60%;
                 margin-left: 20px;
-                max-height: 125px;
-                overflow-y: auto
+                height: 125px;
+                overflow-y: auto;
+
+                .add-person{
+                    padding: 10px;
+                    color: @baseColor;
+                    cursor: pointer;
+                }
             }
         }
     }
+}
+
+.model-item-block{
+    padding: 10px;
+    background: #f2f2f2;
+    cursor: pointer;
+    display: inline-block;
+    white-space: nowrap;
+    margin-right:10px; 
+    span{
+        vertical-align: middle;
+    }
+    .iconfont {
+        margin-left: 5px;
+        vertical-align: middle;
+        &:hover{
+            color: red;
+        }
+    }
+}
+
+.add-status-model{
+    height: 240px;
+    width: 300px;
+    display: inline-block;
+    margin: 20px;
+    border: 1px dashed #dee7fa;
+    line-height: 240px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
 }

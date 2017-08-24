@@ -9,13 +9,13 @@ export default class BookCase extends Component {
             <Tabs classPrefix={'tabs'} activeIndex={0} iconClass={'iconfont icon-config1'} title="界面设置">
                 <TabPane
                     order="0"
-                    tab={<span>首页</span>}>
+                    tab={<span>PC</span>}>
                     <PC/>
                 </TabPane>
                 <TabPane
                     order="1"
-                    tab={<span>PC</span>}>
-                    第二个Tab的内容
+                    tab={<span>移动端</span>}>
+                    <PC/>
                 </TabPane>    
             </Tabs>          
         )

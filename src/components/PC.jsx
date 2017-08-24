@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button,Modal } from 'antd';
 import PropTypes from 'prop-types';
+// import { EventEmitter } from 'events'
+
+const confirm = Modal.confirm;
 let classnames = require('classnames');
 
 export default class PC extends Component {
@@ -132,7 +135,7 @@ const Menu = ( props ) => {
 
 
 const StateContent = ( props ) => {
-
+    
     return (
         <div style={{overflow:'hidden',height:'100%'}}>
             <StatusBar />
@@ -165,46 +168,85 @@ class StatusBar extends Component {
     }
 }
 class StatusModelList extends Component {
+    // static ChildContextTypes = {
+    //     color:PropTypes.string
+    // }
+    // getChildContext () {
+    //     return {
+    //         color:'red'
+    //     }
+    // }
 
     render () {
         return (
-            <div>
+            <div style={{height:'100%',overflowY:'auto'}}>
                 <StatusModel />
+                <div className="add-status-model">
+                    <i className="iconfont"></i> 添加
+                </div>
             </div>
         )
     }
 }
 
 class StatusModel extends Component {
+    // static contextTypes = {
+    //     color:PropTypes.string
+    // }
+    
+    showModel () {
+        confirm({
+            title: 'Do you Want to delete these items?',
+            content: 'this.context.color',
+            onOk() {
+              console.log('OK');
+            },
+            onCancel() {
+              console.log('Cancel');
+            },
+          });
+    }
 
     render () {
         return (
             <div className="status-model">
-                <div className="model-img">
-                </div>    
+                <div className="model-img"></div>
+                    
                 <div className="model-content">
+                    
                     <div className="edit-btn-info">
                         <span><i className="iconfont icon-edit"></i>编辑</span>
-                        <span><i className="iconfont icon-delete1"></i>删除</span>
+                        <span onClick={this.showModel.bind(this)}><i className="iconfont icon-delete1"></i>删除</span>
                     </div>
 
                     <div className="model-info">
-                        <p className="model-info-line">
+                        <div className="model-info-line">
                             <span className="model-label">链接地址:</span>
-                            <div className="model-detail">
-                                <input type="text" style={{width:'300px'}}/>
+                            <div className="model-url">
+                                <input type="text" style={{width:'100%'}}/>
                             </div>
-                        </p>
-
-                        <p className="model-info-line">
-                            <span className="model-label">链接地址:</span>
+                        </div>
+                        <div className="model-info-line">
+                            <span className="model-label">人员:</span>
                             <div className="model-detail" >
-                                sssaaaaaaaaaaaaaaaaasssaaaaaaaaaaaaaaaaasssaaaaaaaaaaaaaaaaasssaaaaaaaaaaaaaaaaasssaaaaaaaaaaaaaaaaasssaaaaaaaaaaaaaaaaa
+                                <ModelBlock>张彬</ModelBlock>
+                                <ModelBlock>张彬</ModelBlock>
+                                <span className="add-person">添加人员</span>
                             </div>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
         )
     }
+}
+
+const ModelBlock = ( {children} ) => {
+
+    return (
+        <div className="model-item-block">
+            <span>{children}</span>
+            <i className="iconfont icon-delete"></i>
+        </div>
+    )
 }
