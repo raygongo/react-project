@@ -102,10 +102,23 @@
     border-bottom: @splitLine;
     overflow: hidden;
     .model-img{
-        // display: inline-block;
         height: 240px;
         width: 300px;
         float: left;
+    }
+    .pc-single{
+        background:url('./img/model-single.png') no-repeat 100% ;
+    }
+    .pc-list{
+        background:url('./img/model-single.png') no-repeat 100% ;
+    }
+    .pc-grid{
+        background:url('./img/model-single.png') no-repeat 100% ;
+    }
+    .mobile-single{
+        background:url('./img/model-single.png') no-repeat 100% ;
+    }
+    .mobile-list{
         background:url('./img/model-single.png') no-repeat 100% ;
     }
 
@@ -117,8 +130,9 @@
             text-align: right;
             color: @baseColor;
             line-height: 25px;
-            span{
-                margin-left: 20px;
+            height: 25px;
+            .edit-btn{
+                margin-left: 15px;
                 cursor: pointer;
             }
             .iconfont{
@@ -127,7 +141,7 @@
         }
         
         .model-info{
-            margin-top:55px; 
+            margin-top:45px; 
 
             .model-info-line{
                 margin-top: 10px;
@@ -168,8 +182,43 @@
         }
     }
 }
+// 列表模式
+.list-model-item{
+    border: @splitLine;
+    margin-bottom: 10px;
+    float: left;
+    width: 100%;
+    .list-item-title{
+        
+        line-height: 30px;
+        font-size: 14px;
+        background: #f9fbff;
+        padding-left: 10px;
+        border-bottom: @splitLine; 
+    }
+    .list-item-content{
+        line-height: 170px;
+        text-align: center;
+    }
+}
+.grid1{
+    width: 49%;
+    &:nth-child(even){
+        float: right;
+    }
+}
+.grid2{
+    width: 70%;
+    &:nth-child(even){
+        width: 29%;
+        float: right;
+    }
+}
+
 
 .model-item-block{
+    font-size: 12px;
+    line-height: 1;
     padding: 10px;
     background: #f2f2f2;
     cursor: pointer;
@@ -182,6 +231,7 @@
     .iconfont {
         margin-left: 5px;
         vertical-align: middle;
+        font-size: 12px;
         &:hover{
             color: red;
         }

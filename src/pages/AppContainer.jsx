@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
     Tabs,
     TabPane,
@@ -11,6 +12,18 @@ import {
 // import {default as http} from '../ajax'
 // let classnames = require('classnames')
 export default class AppContainer extends Component {
+
+    static childContextTypes ={
+        changeConfigItem:PropTypes.func
+    }
+    
+    getChildContext() {
+        return {
+            changeConfigItem(){
+                alert('你好')
+            },
+        }
+    }
 
     componentDidMount() {
         // 发送请求获取数据
@@ -44,7 +57,7 @@ export default class AppContainer extends Component {
                         <Menu text="网格模式二" index="grid2"/>
                     </MenuList>
                     <StatusBar/>
-                    <StatusModelList/>
+                    <StatusModelList />
                 </TabPane>
                 {/* 移动端 */}
                 <TabPane
