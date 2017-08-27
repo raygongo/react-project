@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppContainer } from './pages'
+import { AppContainer } from './container'
 import '@/styles/App.less'
 import '@/styles/AppContainer.less'
 
