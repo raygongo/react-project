@@ -40,7 +40,6 @@ export default class MenuList extends Component {
     }
 
     handelMenuChange (activeIndex,e) {
-
         // // 存储原始值
         const prevIndex = this.state.activeIndex
         // 确保有更改 才更新

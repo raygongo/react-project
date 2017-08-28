@@ -6,7 +6,7 @@ export default class StatusBar extends Component {
     constructor (props){
         super(props)
         this.state = {
-            checked:this.props.checked || 1
+            checked: this.props.checked
         }
     }
     changeStatus(e) {
@@ -20,11 +20,11 @@ export default class StatusBar extends Component {
             <div className="status-bar">
                 状态:
                     <label >
-                    <input type="radio" name="check" value="1" onChange={this.changeStatus.bind(this)} checked={this.state.checked === 1}/>
+                    <input type="radio" value="1" onChange={this.changeStatus.bind(this)} checked={this.state.checked === "1"}/>
                     启用
                     </label>
                 <label >
-                    <input type="radio" name="check" value="0" onChange={this.changeStatus.bind(this)} checked={this.state.checked === 0}/>
+                    <input type="radio" value="0" onChange={this.changeStatus.bind(this)} checked={this.state.checked === "0"}/>
                     禁用
                     </label>
                 <Button type="primary" style={{ float: 'right', top: '10px' }}>

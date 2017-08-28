@@ -12,18 +12,15 @@ export default class ConfigList extends Component {
             case 'pc_single':
                 return <ConfigSingleList listData={this.props.listData} />
             case 'mb_single':
-                return <ConfigSingleList listData={this.props.listData} />     
+                return <ConfigSingleList listData={this.props.listData} />
             default:
                 return <ConfigGridList listData={this.props.listData} type={this.props.modelType} />
-            // case 'pc_grid1':
-            //     return <ConfigGridList listData={this.props.listData} type={this.props.modelType} />
-            // case 'pc_grid2':
-            //     return <ConfigGridList listData={this.props.listData} type={this.props.modelType} />
         }
 
     }
 
     render() {
+        console.log(111)
         return (
             <div style={{ height: 'calc(100% - 50px)', overflowY: 'auto' }}>
                 {this.getConfigItems()}
@@ -36,12 +33,12 @@ class ConfigGridItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            name:this.props.tilte ||'小应用名称',
+            name: this.props.tilte || '小应用名称',
             id: this.props.id || 0
         }
     }
 
-    addNewConfig(){
+    addNewConfig() {
         alert('添加或者更换应用')
     }
 
@@ -54,8 +51,8 @@ class ConfigGridItem extends Component {
                 <div className="config-grid-content" onClick={this.addNewConfig.bind(this)}>
                     {
                         this.state.id
-                        ? <span>更换</span>
-                        : <span>添加</span>
+                            ? <span>更换</span>
+                            : <span>添加</span>
                     }
                 </div>
             </div>
@@ -71,7 +68,7 @@ class ConfigGridList extends Component {
         })
         return (
             <div className={typeClass} style={{ height: '100%', padding: 20 }}>
-                {this.props.listData.map(({id,title,})=><ConfigGridItem key={id} id={id} tilte={title} /> )}
+                {this.props.listData.map(({ id, title }) => <ConfigGridItem key={id} id={id} tilte={title} />)}
             </div>
         )
     }
@@ -92,11 +89,11 @@ class ConfigSingleList extends Component {
         })
     }
 
-    addNewConfig(){
+    addNewConfig() {
         this.setState({
-            listData:[
+            listData: [
                 ...this.state.listData,
-                {url:'',id:'0',staff:[]}
+                { url: '', id: '0', staff: [] }
             ]
         })
     }
@@ -139,7 +136,17 @@ class ConfigSingleItem extends Component {
     }
 
     deletePerson(id) {
-        console.log('删除人员' + 'id')
+        console.log('删除人员id')
+    }
+
+    /**
+     * 取消编辑 恢复数据
+     */
+    cancelEdit() {
+        this.setState({
+            ...this.props,
+            isEdit:false
+        })
     }
 
     render() {
@@ -153,7 +160,7 @@ class ConfigSingleItem extends Component {
                             this.state.isEdit
                                 ? <span>
                                     <Button className="edit-text" type="primary">确定</Button>
-                                    <Button onClick={() => { this.setState({ isEdit: false }) }} className="edit-text" type="primary" ghost>取消</Button>
+                                    <Button onClick={this.cancelEdit.bind(this)} className="edit-text" type="primary" ghost>取消</Button>
                                 </span>
                                 : <span>
                                     <span onClick={() => { this.setState({ isEdit: true }) }} className="edit-text"><i className="iconfont icon-edit"></i>编辑</span>
@@ -166,13 +173,13 @@ class ConfigSingleItem extends Component {
                         <div className="model-info-line">
                             <span className="model-label">链接地址:</span>
                             <div className="model-url">
-                                <input type="text" disabled={!this.state.isEdit} style={{ width: '100%' }} />
+                                <input type="text" disabled={!this.state.isEdit} value={this.state.url} onChange={(e)=>{this.setState({url:e.target.value})}} style={{ width: '100%' }} />
                             </div>
                         </div>
                         <div className="model-info-line">
                             <span className="model-label">人员:</span>
                             <div className="model-detail" >
-                                {this.state.staff.map(({name='',id='0'})=><ModelBlock deletePerson={this.deletePerson.bind(this)} isEdit={this.state.isEdit} key={id} id={id}>{name}</ModelBlock> )}
+                                {this.state.staff.map(({ name = '', id = '0' }) => <ModelBlock deletePerson={this.deletePerson.bind(this)} isEdit={this.state.isEdit} key={id} id={id}>{name}</ModelBlock>)}
                                 <span className="add-person">添加人员</span>
                             </div>
                         </div>
