@@ -1,30 +1,123 @@
 import React, { Component  } from 'react';
-import PC from '../components/PC'
-
-import {default as http} from '../ajax'
-
-let classnames = require('classnames')
+import {
+    ConfigList,
+    MenuList,
+    Menu,
+    Tabs,
+    TabPane,
+    StatusBar
+} from '@/components'
 
 
 
 export default class AppContainer extends Component {
 
+    constructor(props){
+        super(props)
+        this.state={
+            pcModelType:'pc_single',
+            listData:[],
+            singlePC:[{url:'www.baidu',id:'1',staff:[{id:1,name:'刘德华'},{id:2,name:'张学友'}]}],
+            singleMB:[{url:'www.baidu',id:'1',staff:[{id:1,name:'刘德华'},{id:2,name:'张学友'}]}],
+            gridData:[{id:'22'},{title:'组件',id:'11'},{title:'组件',id:'33'},{title:'组件',id:'44'}],
+            gridDataMB:[{id:'22'},{title:'组件',id:'11'},{title:'组件',id:'33'},{title:'组件',id:'44'}],
+            mbModelType:'mb_single',
+        }
+    }
+
     componentDidMount () {
         // 发送请求获取数据
+        this.setState({
+            listData:[
+                ...this.state.singlePC
+            ]
+        })
+    }
+
+    /**
+     * menuList change事件
+     * @param {string} 当前活动的tag 
+     */
+    handelMenuChange({activeIndex, prevIndex}){
+        switch(activeIndex){
+            case 'pc_single':
+                this.setState({
+                    pcModelType:activeIndex,
+                    listData:[
+                        ...this.state.singleMB
+                    ]
+                })
+                break
+            default:
+            this.setState({
+                pcModelType:activeIndex,
+                listData:[
+                    ...this.state.gridDataMB
+                ]
+            })       
+        }
+        
+    }
+
+    handelMobileMenuChange({activeIndex, prevIndex}){
+        switch(activeIndex){
+            case 'mb_single':
+                this.setState({
+                    // pcModelType:activeIndex,
+                    listData:[
+                        ...this.state.singlePC
+                    ]
+                })
+            break
+            default :
+                this.setState({
+                    // pcModelType:activeIndex,
+                    listData:[
+                        ...this.state.gridData
+                    ]
+                })
+        }
     }
     
     render () {
         return (
             <Tabs classPrefix={'tabs'} activeIndex={0} iconClass={'iconfont icon-config1'} title="界面设置">
                 <TabPane
-                    order="0"
+                    order={0}
                     tab={<span>PC</span>}>
-                    <PC/>
+
+                    <MenuList 
+                        activeIndex="pc_single"
+                        onChange={ this.handelMenuChange.bind(this)} 
+                        checked="pc_single">
+                        <Menu text="单页模式" index="pc_single"/>
+                        <Menu text="列表模式" index="pc_list"/>
+                        <Menu text="网格模式一" index="pc_grid1"/>
+                        <Menu text="网格模式二" index="pc_grid2"/>
+                    </MenuList>
+
+                    <div style={{ height:'100%', overflow:'hidden'}}>
+                        <StatusBar />
+                        <ConfigList key="456" modelType={this.state.pcModelType} listData={this.state.listData}/>
+                    </div>
                 </TabPane>
                 <TabPane
-                    order="1"
+                    order={1}
                     tab={<span>移动端</span>}>
-                    <PC/>
+
+                    <MenuList 
+                        activeIndex="mb_single" 
+                        onChange={ this.handelMobileMenuChange.bind(this)}
+                        checked="single">
+                        
+                        <Menu text="单页模式" index="mb_single"/>
+                        <Menu text="列表模式" index="mb_list"/>
+                    </MenuList>
+
+                    <div style={{ height:'100%', overflow:'hidden'}}>
+                        <StatusBar />
+                        <ConfigList key="123" modelType={this.state.mbModelType} listData={this.state.listData}/>
+                    </div>
                 </TabPane>    
             </Tabs>          
         )
@@ -33,225 +126,6 @@ export default class AppContainer extends Component {
 }
 
 
-class Tabs extends Component {
 
-    // 默认属性
-    static defaultProps = {
-        classPrefix :'tabs',
-        onChange :() => {},
-    }
-
-    constructor (props) {
-        super(props)
-
-        this.handleTabClick = this.handleTabClick.bind(this)
-
-        // 从porps中取出 属性
-        let activeIndex = 0
-        // 如果传入就用 没有 就设定
-        if ( 'activeIndex' in this.props){
-            activeIndex = this.props.activeIndex
-        }
-
-        this.state = {
-            activeIndex,
-            prevIndex: activeIndex
-        }
-    }
-    
-    /**
-     * tab点击事件
-     * @param {Number} activeIndex 
-     */
-    handleTabClick(activeIndex) {
-        const prevIndex = this.state.activeIndex;
-        console.log(activeIndex)
-        // 如果点击前后的index 不同 且 props中有activeIndex时 更新
-        if (this.state.activeIndex !== activeIndex ){
-                this.setState({
-                    activeIndex,
-                    prevIndex
-                })
-            }
-        // 更新后 通知外界
-        this.props.onChange({ activeIndex , prevIndex })    
-    }
-
-    /**
-     * 渲染导航区域
-     */
-    renderTabNav() {
-        const { classPrefix , children ,iconClass ,title} = this.props
-
-        return (
-            <TabNav
-                key="tabBar"
-                classPrefix={classPrefix}
-                onTabClick={this.handleTabClick}
-                panels={children}
-                activeIndex={this.state.activeIndex}
-                iconClass={iconClass}
-                title={title}
-            />    
-        )
-    }
-
-    /**
-     * 渲染内容区域
-     */
-    renderTabContent() {
-
-        const { classPrefix , children } = this.props
-        // 取出属性 调用content组件
-        return (
-            <TabContent
-                key="tabContent"
-                classPrefix={classPrefix}
-                panels={children}
-                activeIndex={this.state.activeIndex}
-            />    
-        )
-    }
-
-    // 如果是外部传入的 active 从外部取值 更新
-    componentWillReceiveProps (nextProps) {
-        if ('activeIndex' in nextProps){
-            this.setState({
-                activeIndex : nextProps.activeIndex
-            })
-        }
-    }
-
-    render() {
-        const { className } = this.props
-        // 拿出类 进行 合并 类名
-        const classes = classnames(className, 'ui-tabs-ray')
-        return (
-            <div className={classes}>
-                { this.renderTabNav() }
-                { this.renderTabContent() }
-            </div>
-        );
-    }
-}
-
-class TabPane extends Component {
-
-    render () {
-        const { classPrefix, className, isActive, children} = this.props
-
-        const classes = classnames({
-            [className]: className,
-            [`${classPrefix}-panel`]:true,
-            [`${classPrefix}-active`]:isActive
-        })
-        return (
-            <div className={classes} aria-hidden={!isActive}>{ children }</div>
-        )
-    }
-}
-
-class TabContent extends Component {
-
-    getTabPanes() {
-        const { classPrefix , activeIndex , panels} = this.props
-
-        return React.Children.map(panels , child => {
-            if(!child){ return }
-
-            const order = parseInt(child.props.order, 10)
-            const isActive = activeIndex === order
-
-            return React.cloneElement(child, {
-                classPrefix,
-                isActive,
-                children: child.props.children,
-                key:`tabpane-${order}`
-            })
-
-        })
-    }
-
-    render () {
-        const { classPrefix } = this.props
-
-        const classes = classnames({
-            [`${classPrefix}-content`]: true
-        })
-        return (
-            <div className={classes}>
-                { this.getTabPanes() }
-            </div>
-        )
-    }
-}
-
-class TabNav extends Component {
-
-    getTabsIcon () {
-
-        const { iconClass, title ,classPrefix} = this.props
-
-        if ( iconClass && title ){
-            return (
-                <li className={`${classPrefix}-title`}>
-                    <span className={iconClass}>{title}</span>
-                </li>
-            )
-        }
-    }
-
-    getTabs() {
-        // 取出值
-        const { classPrefix , activeIndex , panels} = this.props
-
-        // 遍历取出 属于Nav的的属性
-        return React.Children.map(panels , child => {
-            if (!child) return 
-            
-            const order = parseInt(child.props.order , 10)
-
-            // 处理className
-            let classes = classnames({
-                [`${classPrefix}-tab`] : true,
-                [`${classPrefix}-active`] : activeIndex === order,
-                [`${classPrefix}-disabled`] : child.props.disabled,
-            })
-
-            const ref = {}
-            if (activeIndex === order ){
-                ref.ref = 'activeTab'
-            }
-
-            return (
-                <li
-                    role="tab"
-                    aria-selected={activeIndex === order ? 'true' : 'false'}
-                    onClick={this.props.onTabClick.bind(this,order)}
-                    className={classes}
-                    key={order}
-                    {...ref}
-                    >
-                        { child.props.tab }
-                </li>
-            )
-        })
-    }
-
-    render () {
-
-        const { classPrefix } = this.props
-        const classes = classnames({
-            [`${classPrefix}-nav`]: true
-        })
-
-        return (
-            <ul className={classes}>
-                { this.getTabsIcon()}
-                { this.getTabs() }
-            </ul>
-        )
-    }
-}
 
 

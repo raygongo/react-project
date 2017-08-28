@@ -117,8 +117,9 @@
             text-align: right;
             color: @baseColor;
             line-height: 25px;
-            span{
-                margin-left: 20px;
+            height: 25px;
+            .edit-text{
+                margin-left: 10px;
                 cursor: pointer;
             }
             .iconfont{
@@ -127,7 +128,7 @@
         }
         
         .model-info{
-            margin-top:55px; 
+            margin-top:50px; 
 
             .model-info-line{
                 margin-top: 10px;
@@ -159,6 +160,7 @@
                 overflow-y: auto;
 
                 .add-person{
+                    display: inline-block;
                     padding: 10px;
                     color: @baseColor;
                     cursor: pointer;
@@ -180,6 +182,7 @@
     }
     .iconfont {
         margin-left: 5px;
+        font-size: 14px;
         vertical-align: middle;
         &:hover{
             color: red;
@@ -197,4 +200,45 @@
     text-align: center;
     font-size: 14px;
     cursor: pointer;
+}
+
+.config-grid-item{
+    border: @splitLine;
+    margin-bottom: 10px;
+    .config-grid-title{
+        background: #f9fbff;
+        line-height: 35px;
+        border-bottom: @splitLine;
+        font-size:  14px;
+        padding: 0 14px;
+    }
+    .config-grid-content{
+        line-height: 175px;
+        height: 175px;
+        text-align: center;
+
+    }
+}
+
+.grid-model-1{
+    .config-grid-item{
+        float: left;
+        width: 69%;
+        &:nth-child(even){
+            width: 30%;
+            float: right;
+        }
+    }
+}
+.grid-model-2{
+    .config-grid-item{
+        float: left;
+        width: 49.5%;
+        margin-bottom: 10px;
+        &:nth-child(even){
+            width: 49.5%;
+            float: right;
+        }
+    }
+    
 }
