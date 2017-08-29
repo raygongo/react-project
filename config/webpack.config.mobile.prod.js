@@ -55,10 +55,10 @@ module.exports = {
   // You can exclude the *.map files from the build during deployment.
   devtool: 'source-map',
   // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve('./polyfills'), paths.appMobileIndexJs],
+  entry: [require.resolve('./polyfills'), paths.appMobileIndex],
   output: {
     // The build folder.
-    path: paths.appBuild,
+    path: paths.appMobileBuild,
     // Generated JS file names (with nested folders).
     // There will be one main bundle, and one file per asynchronous chunk.
     // We don't currently advertise code splitting but Webpack supports it.
@@ -100,7 +100,7 @@ module.exports = {
       // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
       // please link the files into your node_modules/ and let module-resolution kick in.
       // Make sure your source files are compiled, as they will not be processed in any way.
-      new ModuleScopePlugin(paths.appSrc),
+      new ModuleScopePlugin(paths.appMobileSrc),
     ],
   },
   module: {
@@ -122,7 +122,7 @@ module.exports = {
           },
           loader: require.resolve('eslint-loader'),
         }, ],
-        include: paths.appSrc,
+        include: paths.appMobileSrc,
       },
       // ** ADDING/UPDATING LOADERS **
       // The "file" loader handles all assets unless explicitly excluded.
@@ -162,7 +162,7 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
+        include: paths.appMobileSrc,
         loader: require.resolve('babel-loader'),
         options: {
 

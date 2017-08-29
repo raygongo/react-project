@@ -5,7 +5,8 @@ import {
     Menu,
     Tabs,
     TabPane,
-    StatusBar
+    StatusBar,
+    // ConfigModal
 } from '@/components'
 
 
@@ -86,6 +87,7 @@ export default class AppContainer extends Component {
 
     render() {
         return (
+            
             <Tabs classPrefix={'tabs'} iconClass={'iconfont icon-config1'} title="界面设置">
                 <TabPane
                     order={0}
@@ -104,6 +106,7 @@ export default class AppContainer extends Component {
                     <div style={{ height: '100%', overflow: 'hidden' }}>
                         <StatusBar checked={this.state.checked}/>
                         <ConfigList key="456" modelType={this.state.pcModelType} listData={this.state.pcData} />
+                        {/* <ConfigModal/> */}
                     </div>
                 </TabPane>
                 <TabPane
