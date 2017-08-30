@@ -1,6 +1,7 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
+const pxtorem = require('postcss-pxtorem');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -88,7 +89,7 @@ module.exports = {
     // for React Native Web.
     extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
     alias: {
-      '@':path.resolve(__dirname, '../src'),
+      '@': path.resolve(__dirname, '../src_mobile'),
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -237,6 +238,10 @@ module.exports = {
                   ],
                   flexbox: 'no-2009',
                 }),
+                pxtorem({
+                  rootValue: 100,
+                  propWhiteList: [],
+                }),
               ],
             },
           },
@@ -248,6 +253,13 @@ module.exports = {
               },
             },
           },
+          // {
+          //   loader: require.resolve('postcss-pxtorem'),
+          //   options: {
+          //     rootValue: 100,
+          //     propWhiteList: [],
+          //   }
+          // }
         ],
       },
     ],
