@@ -1,45 +1,39 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { FeatureBox } from '@/container'
-import { getHomeListData ,toggleTopBar} from '@/redux/action'
+import { FeatureBox } from '@/components'
+import http from '@/ajax'
 import '@/styles/home.less'
 
-class Home extends Component {
+export default class Home extends Component {
+
+	constructor(props) {
+		super(props)
+		this.state = {
+			data: []
+		}
+	}
 
 	componentDidMount() {
-		this.props.getHomeListData()
+		http.get('http://rapapi.org/mockjs/25291/api/getHomeListData')
+			.then((data) => {
+				this.setState({
+					data: data
+				})
+			})
 	}
+
 	render() {
 		return (
 			<div className="wrap grid-two">
 				{
-					this.props.data.map((feature) => (
-						<FeatureBox 
-						key={feature.id} 
-						{...feature} />
-					))
+					this.state.data.map((item) => {
+						return (
+							<FeatureBox
+								key={item.id}
+								{...item} />
+						)
+					})
 				}
 			</div>
 		)
 	}
 }
-
-const mapStateToProps = (state) => {
-	return {
-		data: state.Home.data
-	}
-}
-const mapDispatchToProps = ( dispatch ,ownProp) => {
-	return{
-		toggleTabBar:(id)=>{
-			dispatch(toggleTopBar(id))
-		},
-		getHomeListData:()=>{
-			dispatch(getHomeListData('http://rapapi.org/mockjs/25291/api/getHomeListData'))
-		}
-	}
-}
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Home)
