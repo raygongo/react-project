@@ -38,14 +38,14 @@ class FeatureBox extends Component {
 			<div className="feature-box">
 				<div className={classes} >
 					<i className="icon_refresh" onClick={this.refreshIframe.bind(this)}></i>
-					<i className="icon_config"></i>
+					<i className="icon_config" onClick={this.props.onChangeApp}></i>
 				</div>
 				<i className={toggleIcon} onClick={this.toggleTopBar.bind(this)}></i>
 				{
 					this.state.isAdd
 						? <iframe ref="iframe"  src={this.state.url}></iframe>
 						: <div className="add-new-app">
-							{this.state.isAdd ? null : <span>添加</span>}
+							{this.state.isAdd ? null : <span onClick={this.props.onChangeApp}>添加</span>}
 						</div>
 				}
 			</div>
