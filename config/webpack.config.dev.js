@@ -191,6 +191,7 @@ module.exports = {
             loader: require.resolve('css-loader'),
             options: {
               importLoaders: 1,
+              modules: true, //让css-loader支持Css Modules。
             },
           },
           {
