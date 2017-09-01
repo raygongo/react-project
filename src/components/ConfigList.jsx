@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames'
 const confirm = Modal.confirm;
@@ -30,6 +31,9 @@ export default class ConfigList extends Component {
 }
 
 class ConfigGridItem extends Component {
+    static contextTypes = {
+        handelOpenAppTip: PropTypes.func
+    }
     constructor(props) {
         super(props)
         this.state = {
@@ -48,7 +52,7 @@ class ConfigGridItem extends Component {
                 <div className="config-grid-title">
                     {this.state.name}
                 </div>
-                <div className="config-grid-content" onClick={this.addNewConfig.bind(this)}>
+                <div className="config-grid-content" onClick={this.context.handelOpenAppTip}>
                     {
                         this.state.id
                             ? <span>更换</span>
@@ -145,7 +149,7 @@ class ConfigSingleItem extends Component {
     cancelEdit() {
         this.setState({
             ...this.props,
-            isEdit:false
+            isEdit: false
         })
     }
 
@@ -173,7 +177,7 @@ class ConfigSingleItem extends Component {
                         <div className="model-info-line">
                             <span className="model-label">链接地址:</span>
                             <div className="model-url">
-                                <input type="text" disabled={!this.state.isEdit} value={this.state.url} onChange={(e)=>{this.setState({url:e.target.value})}} style={{ width: '100%' }} />
+                                <input type="text" disabled={!this.state.isEdit} value={this.state.url} onChange={(e) => { this.setState({ url: e.target.value }) }} style={{ width: '100%' }} />
                             </div>
                         </div>
                         <div className="model-info-line">

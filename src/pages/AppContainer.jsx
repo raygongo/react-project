@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import http from '@/ajax'
 import {
     ConfigList,
     MenuList,
@@ -7,35 +9,58 @@ import {
     TabPane,
     StatusBar,
     // ConfigModal
+    AppTip
 } from '@/components'
 
 
 
 export default class AppContainer extends Component {
 
+    static childContextTypes = {
+        handelOpenAppTip: PropTypes.func
+    }
+
+
     constructor(props) {
         super(props)
         this.state = {
             pcModelType: '',
             pcData: [],
-            mbData:[],
+            mbData: [],
             singlePC: [{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
             singleMB: [{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
             gridData: [{ id: '22' }, { title: '组件', id: '11' }, { title: '组件', id: '33' }, { title: '组件', id: '44' }],
             gridDataMB: [{ id: '22' }, { title: '组件', id: '11' }, { title: '组件', id: '33' }, { title: '组件', id: '44' }],
             mbModelType: '',
-            checked:'0'
+            checked: '0',
+            openAppTip: false,
+            tipData:[]
+        }
+    }
+    // 利用context 分发 打开appTip的方法
+    getChildContext() {
+        return {
+            handelOpenAppTip: () => {
+                this.setState({
+                    openAppTip: true
+                })
+                // 注入数据
+                if(!this.tipData.length){
+                    
+                }
+            },
         }
     }
 
     componentDidMount() {
         // 发送请求获取数据
-        this.setState((prevState)=>{
+        this.setState((prevState) => {
             return {
-                pcModelType:'pc_single',
-                pcData:[{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
-                mbModelType:'mb_single',
-                mbData:[{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }]
+                pcModelType: 'pc_single',
+                pcData: [{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
+                mbModelType: 'mb_single',
+                mbData: [{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
+                tipData: []
             }
         })
     }
@@ -85,49 +110,67 @@ export default class AppContainer extends Component {
         }
     }
 
+    /**
+     * 更换app
+     */
+    handelChangeApp(id, title) {
+        // 接受到要被更改的app的id 和名字 
+        // 从数组中找出来 进行更改
+
+    }
+
     render() {
         return (
-            
-            <Tabs classPrefix={'tabs'} iconClass={'iconfont icon-config1'} title="界面设置">
-                <TabPane
-                    order={0}
-                    tab={<span>PC</span>}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <Tabs classPrefix={'tabs'} iconClass={'iconfont icon-config1'} title="界面设置">
+                    <TabPane
+                        order={0}
+                        tab={<span>PC</span>}>
 
-                    <MenuList
-                        activeIndex="pc_single"
-                        onChange={this.handelMenuChange.bind(this)}
-                        checked="pc_single">
-                        <Menu text="单页模式" index="pc_single" />
-                        <Menu text="列表模式" index="pc_list" />
-                        <Menu text="网格模式一" index="pc_grid1" />
-                        <Menu text="网格模式二" index="pc_grid2" />
-                    </MenuList>
+                        <MenuList
+                            activeIndex="pc_single"
+                            onChange={this.handelMenuChange.bind(this)}
+                            checked="pc_single">
+                            <Menu text="单页模式" index="pc_single" />
+                            <Menu text="列表模式" index="pc_list" />
+                            <Menu text="网格模式一" index="pc_grid1" />
+                            <Menu text="网格模式二" index="pc_grid2" />
+                        </MenuList>
 
-                    <div style={{ height: '100%', overflow: 'hidden' }}>
-                        <StatusBar checked={this.state.checked}/>
-                        <ConfigList key="456" modelType={this.state.pcModelType} listData={this.state.pcData} />
-                        {/* <ConfigModal/> */}
-                    </div>
-                </TabPane>
-                <TabPane
-                    order={1}
-                    tab={<span>移动端</span>}>
+                        <div style={{ height: '100%', overflow: 'hidden' }}>
+                            <StatusBar checked={this.state.checked} />
+                            <ConfigList key="456" modelType={this.state.pcModelType} listData={this.state.pcData} />
+                        </div>
+                    </TabPane>
 
-                    <MenuList
-                        activeIndex="mb_single"
-                        onChange={this.handelMobileMenuChange.bind(this)}
-                        checked="mb_single">
+                    <TabPane
+                        order={1}
+                        tab={<span>移动端</span>}>
 
-                        <Menu text="单页模式" index="mb_single" />
-                        <Menu text="列表模式" index="mb_list" />
-                    </MenuList>
+                        <MenuList
+                            activeIndex="mb_single"
+                            onChange={this.handelMobileMenuChange.bind(this)}
+                            checked="mb_single">
 
-                    <div style={{ height: '100%', overflow: 'hidden' }}>
-                        <StatusBar />
-                        <ConfigList key="123" modelType={this.state.mbModelType} listData={this.state.mbData} />
-                    </div>
-                </TabPane>
-            </Tabs>
+                            <Menu text="单页模式" index="mb_single" />
+                            <Menu text="列表模式" index="mb_list" />
+                        </MenuList>
+
+                        <div style={{ height: '100%', overflow: 'hidden' }}>
+                            <StatusBar />
+                            <ConfigList key="123" modelType={this.state.mbModelType} listData={this.state.mbData} />
+                        </div>
+                    </TabPane>
+                </Tabs>
+                {
+                    this.state.openAppTip
+                        ? <AppTip
+                            tipData={this.state.tipData}
+                            handelChangeApp={this.handelChangeApp}
+                            handelClose={() => { this.setState({ openAppTip: false }) }} />
+                        : null
+                }
+            </div>
         )
     }
 
