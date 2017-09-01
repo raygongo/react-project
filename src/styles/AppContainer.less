@@ -251,21 +251,22 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 999;
+    // background: rgba(0, 0, 0, 0.4);
+    z-index: 999999;
     .app-modal{
         z-index: 999;
-        width: 525px;
+        width: 528px;
         border-radius: 5px;
         overflow: hidden;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%,-50%);
+        border: 1px #b9b9b9 solid;
         
         .app-modal-title{
             line-height: 40px;
-            background: #5987e4;
+            background: #29a4e0;
             padding: 0 20px;
             font-size: 14px;
             color: white;
@@ -277,30 +278,55 @@
         }
 
         .app-modal-content{
-            background: #ffffff;
+            background: #fafafa;
             overflow: hidden;
             padding-bottom: 35px;
             padding-top: 15px; 
 
             .app-modal-item{
-                margin-left: 20px;
+                // margin-left: 20px;
                 margin-top: 20px;
-                margin-right: 20px;
+                // margin-right: 20px;
                 float: left;
-                cursor: pointer;
                 text-align: center;
-                width: 35px;
+                width: 75px;
                 position: relative;
-                background: url('./img/icon-demo.png') no-repeat 100% top;
+
+                .app-select-icon{
+                    background: url('./img/icon_check.png') no-repeat 100%;
+                    content: '';
+                    display: inline-block;
+                    position: absolute;
+                    width: 16px;
+                    height: 16px;
+                    z-index: 999;
+                    right: 14px;
+                    top: -5px;
+                }
+                .app-select-remove{
+                    background: url('./img/icon_remove.png') no-repeat 100%;
+                }
+                .icon-ziyuan{
+                    display: inline-block;
+                    width: 35px;
+                    height: 35px;
+                    border: none;
+                    cursor: pointer;
+                }
                 .app-modal-select{
                     position: absolute;
                     right: -5px;
                     top: -5px;
                 }
                 .app-modal-name{
-                    
-                    display: inline-block;
-                    margin-top: 46px;
+                    display: block;
+                    margin-top: 8px;
+                    cursor: pointer;
+                    padding: 0 10px;
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
         }
