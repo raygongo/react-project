@@ -34,7 +34,7 @@ export default class AppContainer extends Component {
             mbModelType: '',
             checked: '0',
             openAppTip: false,
-            tipData:[]
+            tipData: []
         }
     }
     // 利用context 分发 打开appTip的方法
@@ -45,8 +45,13 @@ export default class AppContainer extends Component {
                     openAppTip: true
                 })
                 // 注入数据
-                if(!this.tipData.length){
-                    
+                if (!this.state.tipData.length) {
+                    http.get('/api/getTipList')
+                        .then(data => {
+                            this.setState({
+                                tipData:data
+                            })
+                        })
                 }
             },
         }

@@ -1,9 +1,56 @@
-import axios from 'axios'
+import axios from 'axios';
+const Mock = require('mockjs');
 
-const fetch = options => {
+const config = {
+	//请求的接口，在请求的时候，如axios.get(url,config);这里的url会覆盖掉config中的url
+	url: '/user',
+
+	// 请求方法同上
+	method: 'get', // default
+	// 基础url前缀
+	baseURL: 'http://rapapi.org/mockjs/25291',
+	　　　　　　
+	transformRequest: [(data)=> {
+		// 这里可以在发送请求之前对请求数据做处理，比如form-data格式化等，这里可以使用开头引入的Qs（这个模块在安装axios的时候就已经安装了，不需要另外安装）
+		　　
+		// data = Qs.stringify({});
+		return data;
+	}],
+
+	transformResponse: [(data)=> {
+		// 这里提前处理返回的数据
+
+		return data;
+	}],
+
+	// 请求头信息
+	headers: {
+		'X-Requested-With': 'XMLHttpRequest'
+	},
+
+	//parameter参数
+	params: {
+		
+	},
+
+	//post参数，使用axios.post(url,{},config);如果没有额外的也必须要用一个空对象，否则会报错
+	data: {
+		// firstName: 'Fred'
+	},
+
+	//设置超时时间
+	timeout: 1000,
+	//返回数据类型
+	responseType: 'json', // default
+
+
+}
+
+const fetchAjax = options => {
 	return new Promise((resolve, reject) => {
+
 		const instance = axios.create({
-			// baseUrl
+			baseURL: 'http://rapapi.org/mockjs/25291'
 		})
 
 		// instance.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -12,11 +59,6 @@ const fetch = options => {
 		 * 请求拦截
 		 */
 		instance.interceptors.request.use(req => {
-			// store.commit('SHOW_LOADING')
-
-			// let token = store.state.user.token
-			// if (token) req.headers.token = token
-
 			return req
 		}, err => {
 			return Promise.reject(err)
@@ -24,49 +66,42 @@ const fetch = options => {
 
 		/**
 		 * 响应拦截
-		 * 关闭loading动画
 		 */
 		instance.interceptors.response.use(res => {
-
-			return res
+			return Mock.mock(res.data)
 		}, err => {
 			return Promise.reject(err)
 		})
-        /**
-         *  处理请求结果
-         */
+		/**
+		 *  处理请求结果
+		 */
 		instance(options)
 			.then(response => {
 				const res = response.data
 
-				if (res.status !== 1) {
-					// if (res.status === 0) {
-					// 	Message.warning({message: res.errmsg})
-
-					// 	if (res.errno === '10002') {
-					// 		store.commit('LOGOUT')
-					// 		router.push({name: 'login'})
-					// 	}
-					// } else {
-					// 	Message.warning({message: '出错啦！请刷新重试或联系系统管理员'})
-					// }
-				} else {
-					resolve(res)
-				}
+				resolve(res)
 			})
 			.catch(err => {
-                // 同一错误处理
-				
+				// 同一错误处理
+
 			})
 	})
 }
 
 export default {
 	get(url, params = {}) {
-		return fetch({method: 'get', url, params})
+		return fetchAjax({
+			method: 'get',
+			url,
+			params
+		})
 	},
 
 	post(url, data = {}) {
-		return fetch({method: 'post', url, data})
+		return fetchAjax({
+			method: 'post',
+			url,
+			data
+		})
 	}
 }
