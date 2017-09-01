@@ -46,7 +46,7 @@ export default class Home extends Component {
 	 * @param {string} id 
 	 */
 	handelChangeApp(id){
-		console.log(id)
+		alert(id)
 		// 发送 请求
 			// 操作成功后 修改tipData 对应数据
 	}

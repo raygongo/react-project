@@ -15,7 +15,7 @@ export default class ConfigModal extends Component {
                        ?<i className={selectClass}></i>
                        :null
                     }
-                    <img src={imgUrl} className="icon-ziyuan " onClick={()=>{this.props.handelChangeApp(id)}}/>
+                    <img src={imgUrl} art={title} className="icon-ziyuan " onClick={()=>{this.props.handelChangeApp(id)}}/>
                     <span className="app-modal-name">{title}</span>
                 </div>
             )
@@ -36,7 +36,6 @@ export default class ConfigModal extends Component {
                     <div className="app-modal-content" >
                         {this.getItems(selectClass)}
                     </div>
-
                 </div>
             </div>
         )
