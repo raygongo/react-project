@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { AppContainer } from './pages'
 import '@/styles/App.less'
 import '@/styles/AppContainer.less'
+import '@/styles/objSelector-background.css'
 
 class App extends Component {
   render() {
