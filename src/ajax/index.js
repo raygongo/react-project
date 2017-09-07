@@ -59,6 +59,7 @@ const fetchAjax = options => {
 		const instance = axios.create({
 			// baseURL: 'http://rapapi.org/mockjs/25291',
 			baseURL: 'http://localhost:8080/plugin-workbench/',
+			timeout: 10000,
 		})
 
 		// instance.defaults.headers['Content-Type'] = 'application/json'
@@ -107,6 +108,8 @@ const fetchAjax = options => {
 				resolve(res)
 			})
 			.catch(err => {
+				document.getElementById("loading-box").style.display = 'none'
+				message.error(  '网络错误!,请重试');
 				// 同一错误处理
 
 			})

@@ -21,11 +21,10 @@ export default class StatusBar extends Component {
      */
     handleChangeStatus(){
         // 判断值是更改的才发送
-        if(this.state.checked == this.props.checked) return
-        this.props.onChange(this.state.checked,this.props.cid)
+        if(this.state.checked === this.props.checked) return
+        this.props.onChange(this.state.checked,this.props.cid, this.props.mode)
     }
     componentWillReceiveProps = ({checked}) => {
-      console.log(checked)
       this.setState({
         checked:checked
       })
@@ -41,7 +40,7 @@ export default class StatusBar extends Component {
                     </label>
                 <label >
                     <input type="radio" value={0} onChange={this.changeStatus.bind(this)} checked={this.state.checked == 0} />
-                    禁用
+                    停用
                     </label>
                 <Button type="primary" onClick={this.handleChangeStatus.bind(this)} style={{ float: 'right', top: '10px' }}>
                     保存

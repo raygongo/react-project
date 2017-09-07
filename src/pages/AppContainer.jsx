@@ -14,7 +14,19 @@ import {
     // AppTip
 } from '@/components'
 
-
+/**
+ * 对应的几种模式 以服务器返回的数据为准
+ */
+const PC = {
+    single: 'pc_page',
+    list: 'pc_list',
+    grid1: 'pc_grid_one',
+    grid2: 'pc_grid_two'
+}
+const MOBILE = {
+    single: 'mob_page',
+    list: 'mob_list'
+}
 
 export default class AppContainer extends Component {
 
@@ -27,54 +39,24 @@ export default class AppContainer extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            pcModelType: '',
             pcData: {
                 list: []
             },
             mbData: {
                 list: []
             },
-            // pcSingle: [{ url: 'www.baidu', id: '1', staff: [{ id: 1, name: '刘德华' }, { id: 2, name: '张学友' }] }],
-            pcSingle: { list: [] },      // pc 端 单页 配置数据
-            pcList: { list: [] },        // pc 端 列表 配置数据
-            pcGridOne: { list: [] },     // pc 端 网格模式1 配置数据
-            pcGridTwo: { list: [] },     // pc 端 网格模式2 配置数据
-            mbSingle: { list: [] },      // 移动端 单页模式 配置
-            mbList: { list: [] },        // 移动端 网格模式 配置
-            mbModelType: '',
-            pcSelected: 'pc_single',
-            mbSelected: '',
             openAppTip: false,
-            tipData: []
+            tipData: [],
+            pcCheckedMode: '',    // pc 端 启用的模式
+            mbCheckedMode: '',    // 移动 端 启用的模式
+            backPcData: [],                // 备份pc端数据
+            backMbData: [],                // 备份mobile数据
         }
     }
     // 利用context 分发 打开appTip的方法
     getChildContext() {
         return {
-            handelOpenAppTip: () => {
-                this.setState({
-                    openAppTip: true
-                })
-                // 注入数据
-                // if (!this.state.tipData.length) {
-                    
-                // }
-            },
-            // 修改成功后 重新获取对应的数据
-            handelUpdateModeData: (cid, type) => {
-                http.post(getModeByCid, {
-                    cid: parseInt(cid)
-                })
-                    .then(data => {
-                        switch (type) {
-                            case 'pc_single':
-                                this.setState({
-                                    pcSingle: Object.assign({},this.state.pcSingle,{list: data})
-                                })
-                                break;
-                        }
-                    })
-            }
+
         }
     }
 
@@ -95,32 +77,27 @@ export default class AppContainer extends Component {
                 // 找出对应的数据 单页 列表网格
                 data.forEach(item => {
                     switch (item.type) {
-                        case 'pc_page':
+                        case PC.single:
                             this.setState({
-                                pcSingle: { ...item },
                                 pcData: { ...item }
                             })
                             break;
-                        case 'pc_list':
-                            this.setState({
-                                pcList: { ...item }
-                            })
-                            break;
-                        case 'pc_grid_one':
-                            this.setState({
-                                pcGridOne: { ...item }
-                            })
-                            break;
-                        case 'pc_grid_two':
-                            this.setState({
-                                pcGridTwo: { ...item }
-                            })
-                            break;
-
                     }
+                    // 找出选中模式
+                    if (item.state === 1) {
+
+                        this.setState({
+                            pcCheckedMode: item.type
+                        })
+                    }
+                })
+                // 备份数据
+                this.setState({
+                    backPcData: data
                 })
             })
 
+        // 获取移动端初始数据
         http.post(findTerminalAll, {
             orgId: '200196',
             terminal: 'MOBILE'
@@ -128,53 +105,26 @@ export default class AppContainer extends Component {
             .then(data => {
                 data.forEach(item => {
                     switch (item.type) {
-                        case 'mob_page':
+                        case MOBILE.single:
                             this.setState({
-                                mbSingle: {
-                                    ...item
-                                },
                                 mbData: {
                                     ...item
                                 }
                             })
                             break
-                        case 'mob_list':
-                            this.setState({
-                                mbList: {
-                                    ...item
-                                }
-                            })
+                    }
+                    // 找出移动端选中的模式
+                    if (item.state === 1) {
+                        this.setState({
+                            mbCheckedMode: item.type
+                        })
                     }
                 })
+                // 备份移动端数据
+                this.setState({
+                    backMbData: data
+                })
             })
-    }
-
-    /**
-     * 获取content内容
-     */
-    getContentList() {
-        switch (this.state.pcSelected) {
-            case 'pc_single':
-                return <div style={{ height: '100%', overflow: 'hidden' }}>
-                    <StatusBar key={1} checked={this.state.pcSingle.state} cid={this.state.pcSingle.cid} onChange={this.changeModeStatus.bind(this)} />
-                    <ConfigList key={this.state.pcSingle.cid} listData={this.state.pcSingle} />
-                </div>
-            case 'pc_list':
-                return <div style={{ height: '100%', overflow: 'hidden' }}>
-                    <StatusBar key={2}  checked={this.state.pcList.state} cid={this.state.pcList.cid} onChange={this.changeModeStatus.bind(this)} />
-                    <ConfigList key={this.state.pcList.cid} listData={this.state.pcList} />
-                </div>
-            case 'pc_grid1':
-                return <div style={{ height: '100%', overflow: 'hidden' }}>
-                    <StatusBar key={5}  checked={this.state.pcGridOne.state} cid={this.state.pcGridOne.cid} onChange={this.changeModeStatus.bind(this)} />
-                    <ConfigList key={this.state.pcGridOne.cid} listData={this.state.pcGridOne} />
-                </div>
-            case 'pc_grid2':
-                return <div style={{ height: '100%', overflow: 'hidden' }}>
-                    <StatusBar key={4} checked={this.state.pcGridTwo.state} cid={this.state.pcGridTwo.cid} onChange={this.changeModeStatus.bind(this)} />
-                    <ConfigList key={this.state.pcGridTwo.cid} listData={this.state.pcGridTwo} />
-                </div>
-        }
     }
 
     /**
@@ -182,30 +132,46 @@ export default class AppContainer extends Component {
      * @param {string} 当前活动的tag 
      */
     handelMenuChange({ activeIndex, prevIndex }) {
-        this.setState({
-            pcSelected: activeIndex
+        // 1.获取最新数据
+        this.state.backPcData.some(item => {
+            if (item.type === activeIndex) {
+
+                http.post(getModeByCid, { cid: item.cid })
+                    .then(data => {
+                        this.setState({
+                            pcData: {
+                                ...item,
+                                list: data
+                            }
+                        })
+                    })
+                return true
+            }
+            return false
         })
+
+
     }
     /**
      * 监听切换移动端menuList 更改数据
      * @param {} param0 
      */
     handelMobileMenuChange({ activeIndex, prevIndex }) {
-        switch (activeIndex) {
-            case 'mb_single':
-                this.setState({
-                    mbData: {
-                        ...this.state.mbSingle
-                    }
-                })
-                break
-            case 'mb_list':
-                this.setState({
-                    mbData: {
-                        ...this.state.mbList
-                    }
-                })
-        }
+        this.state.backMbData.some(item => {
+            if (item.type === activeIndex) {
+                http.post(getModeByCid, { cid: item.cid })
+                    .then(data => {
+                        this.setState({
+                            mbData: {
+                                ...item,
+                                list: data
+                            }
+                        })
+                    })
+                return true
+            }
+            return false
+        })
     }
 
     /**
@@ -218,9 +184,9 @@ export default class AppContainer extends Component {
     }
 
     /**
-     * 状态的 启用与禁用
+     *  pc端状态的 启用与禁用
      */
-    changeModeStatus(state, cid) {
+    changeModeStatus(state, cid, mode) {
         debugger
         // 1.发送请求
         http.post(changeStateAPI, {
@@ -228,29 +194,87 @@ export default class AppContainer extends Component {
             id: parseInt(cid)
         }).then(data => {
             message.success('修改成功')
-
-            // 2. 当设置启用模式成功后 需要将其他模式的 状态改为停用
+            // 如果是启用 需要 更改其他模式为停用
+            let pc = this.state.backPcData
             if (state == 1) {
+                // 修改menuList 的check属性
                 this.setState({
-                    pcSingle: {
-                        ...this.state.pcSingle,
-                        state: this.state.pcSingle.cid == cid ? 1 : 0
-                    },
-                    pcList: {
-                        ...this.state.pcList,
-                        state: this.state.pcList.cid == cid ? 1 : 0
-                    },
-                    pcGridOne: {
-                        ...this.state.pcGridOne,
-                        state: this.state.pcGridOne.cid == cid ? 1 : 0
-                    },
-                    pcGridTwo: {
-                        ...this.state.pcGridTwo,
-                        state: this.state.pcGridTwo.cid == cid ? 1 : 0
-                    },
+                    pcCheckedMode: mode
+                })
+                pc.forEach(data => {
+                    if (data.cid == cid) {
+                        data.state = 1
+                    } else {
+                        data.state = 0
+                    }
+                })
+            } else {
+                // 修改menuList 的check属性
+                this.setState({
+                    pcCheckedMode: ''
+                })
+                pc.some(data => {
+                    if (data.cid == cid) {
+                        data.state = 0
+                        return true
+                    }
+                    return false
                 })
             }
-
+            // 修改当前 显示数据 的状态
+            this.setState({
+                backPcData: pc,
+                pcData: {
+                    ...this.state.pcData,
+                    state: state
+                }
+            })
+        })
+    }
+    /**
+     * 移动端 状态的启用与停用
+     */
+    changeMobileStatus(state, cid, mode) {
+        // 发送请求 修改状态
+        http.post(changeStateAPI, {
+            state: parseInt(state),
+            id: parseInt(cid)
+        }).then(data => {
+            message.success('修改成功')
+            // 如果是启用 需要 更改其他模式为停用
+            let mb = this.state.backMbData
+            if (state == 1) {
+                // 修改menuList 的check属性
+                this.setState({
+                    mbCheckedMode: mode
+                })
+                mb.forEach(data => {
+                    if (data.cid == cid) {
+                        data.state = 1
+                    } else {
+                        data.state = 0
+                    }
+                })
+            } else {
+                // 修改menuList 的check属性
+                this.setState({
+                    mbCheckedMode: ''
+                })
+                mb.some(data => {
+                    if (data.cid == cid) {
+                        data.state = 0
+                        return true
+                    }
+                    return false
+                })
+            }
+            this.setState({
+                backMbData: mb,
+                mbData: {
+                    ...this.state.mbData,
+                    state: state
+                }
+            })
         })
     }
 
@@ -263,19 +287,22 @@ export default class AppContainer extends Component {
                         tab={<span>PC</span>}>
 
                         <MenuList
-                            activeIndex="pc_single"
+                            activeIndex={PC.single}
                             onChange={this.handelMenuChange.bind(this)}
-                            checked="pc_single">
-                            <Menu text="单页模式" index="pc_single" />
-                            <Menu text="列表模式" index="pc_list" />
-                            <Menu text="网格模式一" index="pc_grid1" />
-                            <Menu text="网格模式二" index="pc_grid2" />
+                            checked={this.state.pcCheckedMode}>
+                            <Menu text="单页模式" index={PC.single} />
+                            <Menu text="列表模式" index={PC.list} />
+                            <Menu text="网格模式一" index={PC.grid1} />
+                            <Menu text="网格模式二" index={PC.grid2} />
                         </MenuList>
-                        {this.getContentList()}
-                        {/* <div style={{ height: '100%', overflow: 'hidden' }}>
-                            <StatusBar checked={this.state.pcData.state} cid={this.state.pcData.cid} onChange={this.changeModeStatus.bind(this)} />
+                        <div style={{ height: '100%', overflow: 'hidden' }}>
+                            <StatusBar
+                                checked={this.state.pcData.state}
+                                cid={this.state.pcData.cid}
+                                mode={this.state.pcData.type}
+                                onChange={this.changeModeStatus.bind(this)} />
                             <ConfigList key="456" listData={this.state.pcData} />
-                        </div> */}
+                        </div>
                     </TabPane>
 
                     <TabPane
@@ -283,18 +310,21 @@ export default class AppContainer extends Component {
                         tab={<span>移动端</span>}>
 
                         <MenuList
-                            activeIndex="mb_single"
+                            activeIndex={MOBILE.single}
                             onChange={this.handelMobileMenuChange.bind(this)}
-                            checked="mb_single">
-
-                            <Menu text="单页模式" index="mb_single" />
-                            <Menu text="列表模式" index="mb_list" />
+                            checked={this.state.mbCheckedMode}>
+                            <Menu text="单页模式" index={MOBILE.single} />
+                            <Menu text="列表模式" index={MOBILE.list} />
                         </MenuList>
 
-                        {/* <div style={{ height: '100%', overflow: 'hidden' }}>
-                            <StatusBar checked={this.state.checked} />
+                        <div style={{ height: '100%', overflow: 'hidden' }}>
+                            <StatusBar
+                                mode={this.state.mbData.type}
+                                checked={this.state.mbData.state}
+                                cid={this.state.mbData.cid}
+                                onChange={this.changeMobileStatus.bind(this)} />
                             <ConfigList key="123" listData={this.state.mbData} />
-                        </div> */}
+                        </div>
                     </TabPane>
                 </Tabs>
                 {/* {
@@ -310,8 +340,3 @@ export default class AppContainer extends Component {
     }
 
 }
-
-
-
-
-

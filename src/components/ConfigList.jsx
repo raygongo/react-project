@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames'
 import http from '@/ajax'
-import { saveModifyPage, delSingleItem ,editListItem} from '@/ajax/api'
+import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem } from '@/ajax/api'
 import { AppTip } from '@/components';
 import { message } from 'antd';
 
@@ -44,54 +44,98 @@ class ConfigGridItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            name: props.name || '小应用名称',
+            name: props.name,
             mark: props.mark,
-            showAppTip:false
+            url: props.url,
+            showAppTip: false,
+            id: props.id
         }
     }
 
     addNewConfig() {
         alert('添加或者更换应用')
     }
-
-    handelChangeApp({url,pgeico,name,mark}){
-        http.post(editListItem,{
-            id:this.props.id,
-            url,
-            ico:pgeico,
-            name,
-            mark
-        }).then( data => {
-            // 成功后 修改 mark
-            this.setState({
-                mark,
-                name
+    /**
+     * 更换 应用
+     * @param {} param0 
+     */
+    handelChangeApp({ url, pgeico, name, mark }) {
+        // 判断是 新增还是修改 还是删除  如果有url且mark一致说明是删除 
+        // 删除
+        if (this.state.url && (this.state.mark == mark)) {
+            http.post(delGirdItem,{
+                id:this.state.id,
+            }).then( data => {
+                // 成功后 初始化 数据
+                this.setState({
+                    id: null,
+                    url:null,
+                    ico: null,
+                    name:null,
+                    mark:null,
+                })
             })
-        })
-    }   
+        } else if(this.state.url){
+            // 修改
+            http.post(editListItem, {
+                id: this.state.id,
+                url,
+                ico: pgeico,
+                name,
+                mark
+            }).then(data => {
+                // 成功后 修改 mark
+                this.setState({
+                    mark,
+                    name
+                })
+            })
+           
+        }else{
+             // 新增
+             http.post(addListItem, {
+                uid: this.props.uid,
+                sort: this.props.sort,
+                url,
+                ico: pgeico,
+                name,
+                mark,
+                frameNum: this.props.frameNum
+            }).then(data => {
+
+                this.setState({
+                    mark,
+                    name,
+                    id: data,
+                    url
+                })
+            })
+        }
+
+    }
 
     render() {
         return (
             <div className="config-grid-item">
                 <div className="config-grid-title">
-                    {this.state.name}
+                    {this.state.name || '小应用名称'}
                 </div>
-                <div className="config-grid-content" onClick={() => { this.setState({showAppTip:true}) }}>
+                <div className="config-grid-content" onClick={() => { this.setState({ showAppTip: true }) }}>
                     {
                         this.state.mark
-                            ? <span>更换</span>
-                            : <span>添加</span>
+                            ? <span className="config-grid-change">更换</span>
+                            : <span className="config-grid-add">添加</span>
                     }
                 </div>
                 {
                     this.state.showAppTip
-                    ? <AppTip
-                    tipData={this.state.tipData}
-                    mark={this.state.mark}
-                    id={this.state.id}
-                    handelChangeApp={this.handelChangeApp.bind(this)}
-                    handelClose={() => { this.setState({ showAppTip: false }) }} />
-                    :null
+                        ? <AppTip
+                            tipData={this.state.tipData}
+                            mark={this.state.mark}
+                            id={this.state.id}
+                            handelChangeApp={this.handelChangeApp.bind(this)}
+                            handelClose={() => { this.setState({ showAppTip: false }) }} />
+                        : null
                 }
             </div>
         )
@@ -99,6 +143,9 @@ class ConfigGridItem extends Component {
 }
 
 class ConfigGridList extends Component {
+    // componentWillReceiveProps(listData) {
+    //     this.setState(listData)
+    // }
     render() {
         // 模式是list样式 判断是否为网格模式 添加不同的样式
         const typeClass = classNames({
@@ -107,7 +154,12 @@ class ConfigGridList extends Component {
         })
         return (
             <div className={typeClass} style={{ height: '100%', padding: 20 }}>
-                {this.props.listData.list.map((itemConfig, index) => <ConfigGridItem key={index} {...itemConfig} />)}
+                {this.props.listData.list.map((itemConfig, index) => <ConfigGridItem
+                    key={index}
+                    {...itemConfig}
+                    sort={index}
+                    frameNum={this.props.listData.frameNum}
+                    uid={this.props.listData.uid} />)}
             </div>
         )
     }
@@ -124,9 +176,6 @@ class ConfigSingleList extends Component {
             listData: this.props.listData
         }
     }
-    componentWillReceiveProps(listData) {
-        this.setState(listData)
-    }
     getItems() {
         return this.state.listData.list.map((itemData, index) => {
             let staff = []
@@ -140,12 +189,14 @@ class ConfigSingleList extends Component {
                     }
                 })
             }
+            itemData.staff && (staff = itemData.staff)
 
             return (<ConfigSingleItem
                 deleteConfigItem={this.deleteConfigItem.bind(this)}
                 {...itemData} staff={staff}
                 cid={this.props.listData.cid}
                 index={index}
+                saveConfig={this.handelSaveConfigItem.bind(this)}
                 uid={this.props.listData.uid}
                 key={index} />)
         })
@@ -159,16 +210,43 @@ class ConfigSingleList extends Component {
                 ...this.state.listData,
                 list: [
                     ...this.state.listData.list,
-                    { url: '', uid: this.state.listData.uid, cid: this.state.listData.cid, id: '', staff: [], isEdit: true, } //增加的一条新数据 绑定改模式的uid 
+                    { url: '', uid: this.state.listData.uid, cid: this.state.listData.cid, id: '', staff: [], isEdit: true } //增加的一条新数据 绑定改模式的uid 
                 ]
             }
         })
     }
     /**
+     * 保存配置项
+     */
+    handelSaveConfigItem({ state, props }) {
+        http.post(saveModifyPage, {
+            id: state.id,
+            uid: this.state.listData.uid,
+            url: state.url,
+            auth: JSON.stringify((state.staff.map(({ cn }) => cn)))
+        })
+            .then(data => {
+                // 提示
+                message.success('编辑成功')
+                // 修改数据
+                let list = this.state.listData.list
+                list.splice(props.index, 1, Object.assign({}, list[props.index],
+                    { isEdit: false, url: state.url, id: data, staff: state.staff, authInfo: '' }))
+
+                this.setState({
+                    listData: {
+                        ...this.state.listData,
+                        list: list
+                    }
+                })
+
+            })
+    }
+    /**
      *  删除单页配置项
      */
     deleteConfigItem(uid, index, id) {
-
+        console.log(index)
 
         confirm({
             title: '确定要删除该条配置吗',
@@ -183,8 +261,26 @@ class ConfigSingleList extends Component {
                     http.post(delSingleItem, { id: id })
                         .then(data => {
                             // 成功后刷新数据
-                            this.context.handelUpdateModeData(this.state.listData.cid, 'pc_single')
+                            let list = this.state.listData.list
+
+                            list.splice(index, 1)
+                            this.setState({
+                                listData: {
+                                    ...this.state.listData,
+                                    list: list,
+                                }
+                            })
                         })
+                } else {
+                    // 成功后刷新数据
+                    let list = this.state.listData.list
+                    list.splice(index, 1)
+                    this.setState({
+                        listData: {
+                            ...this.state.listData,
+                            list: list,
+                        }
+                    })
                 }
 
             },
@@ -195,8 +291,11 @@ class ConfigSingleList extends Component {
     }
 
     render() {
+        const typeClass = classNames({
+            'mobile-single': this.props.listData.type === 'mob_page',
+        })
         return (
-            <div style={{ height: '100%' }}>
+            <div style={{ height: '100%' }} className={typeClass}> 
                 {this.getItems()}
                 <div className="add-status-model" onClick={this.addNewConfig.bind(this)}>
                     <i className="iconfont"></i> 添加
@@ -220,20 +319,20 @@ class ConfigSingleItem extends Component {
             isEdit: props.isEdit,
             url: props.url,
             staff: props.staff,
-            uid: props.uid,
             id: props.id,
 
         }
     }
-    componentWillReceiveProps = ({ url, id, uid, cid, staff }) => {
+    componentWillReceiveProps({ isEdit, url, staff, uid, id }) {
         this.setState({
+            isEdit,
             url,
             staff,
-            id,
             uid,
-            cid,
+            id
         })
     }
+
 
     /**
      *  删除配置人员
@@ -262,7 +361,7 @@ class ConfigSingleItem extends Component {
     handleSaveConfig() {
         http.post(saveModifyPage, {
             id: this.state.id,
-            uid: this.state.uid,
+            uid: this.props.uid,
             url: this.state.url,
             auth: JSON.stringify((this.state.staff.map(({ cn }) => cn)))
         })
@@ -271,10 +370,9 @@ class ConfigSingleItem extends Component {
                 message.success('编辑成功')
                 // 退出编辑模式
                 this.setState({
-                    isEdit: false
+                    isEdit: false,
+                    id: data
                 })
-                // 告知 根组件 成功后 重新获取当前模式最新数据
-                this.context.handelUpdateModeData(this.props.cid, 'pc_single')
             })
     }
     /**
@@ -330,6 +428,7 @@ class ConfigSingleItem extends Component {
     }
 
     render() {
+
         return (
             <div className="status-model">
                 <div className="model-img"></div>
@@ -339,12 +438,13 @@ class ConfigSingleItem extends Component {
                         {
                             this.state.isEdit
                                 ? <span>
-                                    <Button className="edit-text" type="primary" onClick={this.handleSaveConfig.bind(this)}>确定</Button>
-                                    <Button onClick={this.cancelEdit.bind(this)} className="edit-text" type="primary" ghost>取消</Button>
+                                    <Button type="primary" onClick={() => { this.props.saveConfig(this) }}>确定</Button>
+                                    <Button className="edit-cancel-btn" onClick={this.cancelEdit.bind(this)} type="primary" ghost>取消</Button>
                                 </span>
                                 : <span>
-                                    <span onClick={() => { this.setState({ isEdit: true }) }} className="edit-text"><i className="iconfont icon-edit"></i>编辑</span>
-                                    <span onClick={() => { this.props.deleteConfigItem(this.props.uid, this.props.index, this.props.id) }} className="edit-text"><i className="iconfont icon-delete1"></i>删除</span>
+                                    <span className="edit-edit-btn" onClick={() => { this.setState({ isEdit: true }) }} >编辑</span>
+                                    <span className="edit-del-btn" onClick={() => { this.props.deleteConfigItem(this.props.uid, this.props.index, this.state.id) }} >
+                                        删除</span>
                                 </span>
                         }
                     </div>

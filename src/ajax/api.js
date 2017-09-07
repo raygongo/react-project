@@ -19,3 +19,9 @@ export const getAppList = '/common/getAppStore'
 
 // 编辑列表模式下的应用
 export const editListItem = '/company/modifyOther'
+
+// 新增列表模式下的应用
+export const addListItem = '/company/saveOther'
+
+// 删除列表或网格模式的配置项
+export const delGirdItem = '/company/delOther'
