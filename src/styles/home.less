@@ -8,7 +8,22 @@ iframe{
 .wrap{
     height: 100%;
     padding: 10px;
+    padding-right: 6px;
     overflow-y: auto;
+
+    .mode-setting-btn{
+        cursor: pointer;
+        position: fixed;
+        right: 16px;
+        bottom: 14px;
+        z-index: 99;
+        width: 64px;
+        height: 64px;
+        background: url('./img/btn_setting_nomal.png') no-repeat 100% ;
+        &:hover{
+            background: url('./img/btn_setting_hover.png') no-repeat 100% ;
+        }
+    }
 }
 
 .feature-box{
@@ -23,8 +38,18 @@ iframe{
     .iconfont{
         transition: all .2s ease
     }
+    .toggle-bar{
+        font-size: 20px;
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        z-index: 99;
+        cursor: pointer;
+    }
 }
-.grid{
+.grid-one{
     .feature-box{
         &:nth-child(2n+1){
             width: 65%;
@@ -53,7 +78,7 @@ iframe{
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 90;
     height: 0;
     width: 100%;
     background: #f3f8fd;
@@ -87,15 +112,7 @@ iframe{
     border-bottom: @splitLine;
 }
 
-.toggle-bar{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    height: 20px;
-    z-index: 1000;
-    cursor: pointer;
-}
+
 .arrw-rotate{
     transform: rotateZ(90deg);
 }
@@ -105,6 +122,16 @@ iframe{
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
+
+    .add-new-title{
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        display: inline-block;
+        padding-top: 40px;
+        background: url('./img/icon_add1.png') no-repeat top center;
+    }
 }
 
 
@@ -116,7 +143,7 @@ iframe{
     width: 100%;
     height: 100%;
     // background: rgba(0, 0, 0, 0.4);
-    z-index: 999999;
+    z-index: 999;
     .app-modal{
         z-index: 999;
         width: 528px;
@@ -196,4 +223,104 @@ iframe{
         }
     }
 
+}
+
+// mode-tip
+
+.mode-select-tip{
+    position: fixed;
+    z-index:100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0);
+
+    .mode-select-content{
+        border: @splitLine;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 376px;
+        height: 214px;
+        vertical-align: middle;
+        transform: translate(-50%,-50%);
+        background: #fff;
+
+        .mode-select-title{
+            font-size: 12px;
+            padding: 10px;
+            height: 30px;
+            background: #29a4e0;
+            color: #fff;
+
+            .iconfont{
+                position: relative;
+                top: -3px;
+                float: right;
+                cursor: pointer;
+            }
+        }
+
+        .mode-select-list{
+            overflow: hidden;
+
+            .mode-select-item{
+                width: 60px;
+                text-align: center;
+                float: left;
+                margin: 32px;
+                cursor: pointer;
+                position: relative;
+
+                .mode-checked{
+                    right: 9px;
+                    top: -5px;
+                    width: 16px;
+                    height: 16px;
+                    position: absolute;
+                    background: url('./img/icon_check.png') no-repeat 100%;
+
+                }
+
+                .mode-item-list{
+                    margin-bottom: 10px;
+                    width: 34px;
+                    height: 34px;
+                    display: inline-block;
+                    background: url('./img/icon_list.png') no-repeat 100%;
+
+                }
+                .mode-item-grid{
+                    margin-bottom: 10px;
+                    width: 34px;
+                    height: 34px;
+                    display: inline-block;
+                    background: url('./img/icon_grid.png') no-repeat 100%;
+                    
+                }
+            }
+        }
+
+        .mode-select-bottom{
+            border-top: 1px solid #ddd;
+            text-align: right;
+            padding: 15px;
+
+            .mode-selet-btn{
+                margin-left: 10px; 
+            }
+        }
+    }
+}
+
+// loading
+#loading-box{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+
+  z-index: 9999;
 }

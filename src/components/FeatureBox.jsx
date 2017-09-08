@@ -2,13 +2,23 @@ import React, { Component } from 'react'
 import classNames from 'classnames'
 
 class FeatureBox extends Component {
+	static defaultPops = {
+		auth: null,
+		authInfo: [],
+		ico: null,
+		id: null,
+		mark: null,
+		name: null,
+		sort: null,
+		url: null,
+	}
 	constructor(props) {
 		super(props)
 		this.state = {
 			openTopBar: false,
-			isAdd: this.props.isAdd || false,
 			id: this.props.id || '',
-			url: 'http://www.ray33.com'
+			url: this.props.url,
+			mark: props.mark
 		}
 	}
 	toggleTopBar() {
@@ -18,9 +28,9 @@ class FeatureBox extends Component {
 	}
 	refreshIframe() {
 		// this.refs.iframe.location.src = this.state.url
-		if(!this.state.url) return
+		if (!this.state.url) return
 		this.setState({
-			url:'http://www.ray33.com?'+new Date().getTime()
+			url: `${this.state.url}?` + new Date().getTime()
 		})
 	}
 	render() {
@@ -42,10 +52,10 @@ class FeatureBox extends Component {
 				</div>
 				<i className={toggleIcon} onClick={this.toggleTopBar.bind(this)}></i>
 				{
-					this.state.isAdd
-						? <iframe ref="iframe"  src={this.state.url}></iframe>
+					this.state.url
+						? <iframe ref="iframe" src={this.state.url}></iframe>
 						: <div className="add-new-app">
-							{this.state.isAdd ? null : <span onClick={this.props.onChangeApp}>添加</span>}
+							<span className="add-new-title" onClick={this.props.onChangeApp}>点击添加应用</span>
 						</div>
 				}
 			</div>
