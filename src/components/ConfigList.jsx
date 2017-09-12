@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import classNames from 'classnames'
 import http from '@/ajax'
 import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem } from '@/ajax/api'
@@ -63,19 +63,19 @@ class ConfigGridItem extends Component {
         // 判断是 新增还是修改 还是删除  如果有url且mark一致说明是删除 
         // 删除
         if (this.state.url && (this.state.mark == mark)) {
-            http.post(delGirdItem,{
-                id:this.state.id,
-            }).then( data => {
+            http.post(delGirdItem, {
+                id: this.state.id,
+            }).then(data => {
                 // 成功后 初始化 数据
                 this.setState({
                     id: null,
-                    url:null,
+                    url: null,
                     ico: null,
-                    name:null,
-                    mark:null,
+                    name: null,
+                    mark: null,
                 })
             })
-        } else if(this.state.url){
+        } else if (this.state.url) {
             // 修改
             http.post(editListItem, {
                 id: this.state.id,
@@ -90,10 +90,10 @@ class ConfigGridItem extends Component {
                     name
                 })
             })
-           
-        }else{
-             // 新增
-             http.post(addListItem, {
+
+        } else {
+            // 新增
+            http.post(addListItem, {
                 uid: this.props.uid,
                 sort: this.props.sort,
                 url,
@@ -219,6 +219,15 @@ class ConfigSingleList extends Component {
      * 保存配置项
      */
     handelSaveConfigItem({ state, props }) {
+        if (!state.staff.length || !state.url.length) {
+            notification.warning({
+                message: state.url.length?'请选择人员!':'请填写链接地址!',
+                // description: '链接地址或人员不能为空!',
+            });
+            return
+        }
+
+
         http.post(saveModifyPage, {
             id: state.id,
             uid: this.state.listData.uid,
@@ -249,8 +258,7 @@ class ConfigSingleList extends Component {
         console.log(index)
 
         confirm({
-            title: '确定要删除该条配置吗',
-            content: `${uid}`,
+            title: '确定要删除该条规则吗',
             onOk: () => {
                 // 分为两种情况删除 1. 本地删除 (添加配置未上传服务器)  2. 远程删除 已经保存 到服务器中
                 // 1. 本地删除 (添加配置未上传服务器) 如果判断没有id
@@ -295,7 +303,7 @@ class ConfigSingleList extends Component {
             'mobile-single': this.props.listData.type === 'mob_page',
         })
         return (
-            <div style={{ height: '100%' }} className={typeClass}> 
+            <div style={{ height: '100%' }} className={typeClass}>
                 {this.getItems()}
                 <div className="add-status-model" onClick={this.addNewConfig.bind(this)}>
                     <i className="iconfont"></i> 添加
@@ -359,6 +367,7 @@ class ConfigSingleItem extends Component {
      * 保存配置
      */
     handleSaveConfig() {
+
         http.post(saveModifyPage, {
             id: this.state.id,
             uid: this.props.uid,

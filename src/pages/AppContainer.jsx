@@ -187,7 +187,6 @@ export default class AppContainer extends Component {
      *  pc端状态的 启用与禁用
      */
     changeModeStatus(state, cid, mode) {
-        debugger
         // 1.发送请求
         http.post(changeStateAPI, {
             state: parseInt(state),

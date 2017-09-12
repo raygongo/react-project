@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 
 export default class StatusBar extends Component {
 
@@ -7,6 +7,7 @@ export default class StatusBar extends Component {
         super(props)
         this.state = {
             checked: this.props.checked,
+            visible: false,
         }
     }
     changeStatus(e) {
@@ -14,27 +15,34 @@ export default class StatusBar extends Component {
         this.setState({
             checked: e.target.value
         })
-        
+
     }
     /**
      * 提交修改状态的值
      */
-    handleChangeStatus(){
+    handleChangeStatus() {
         // 判断值是更改的才发送
-        if(this.state.checked === this.props.checked) return
-        this.props.onChange(this.state.checked,this.props.cid, this.props.mode)
+        if (this.state.checked === this.props.checked) return
+        Modal.confirm({
+            title: this.state.checked == '1' ? '你确定要保存？' : '你确认要停用吗？',
+            content: (this.state.checked == '1') && '该布局启用后其他已启用布局将自动停止!',
+            onOk: () => {
+                this.props.onChange(this.state.checked, this.props.cid, this.props.mode)
+            }
+        })
+
     }
-    componentWillReceiveProps = ({checked}) => {
-      this.setState({
-        checked:checked
-      })
+    componentWillReceiveProps = ({ checked }) => {
+        this.setState({
+            checked: checked
+        })
     }
-    
+
     render() {
         return (
-            <div className="status-bar">
+            <div className="status-bar" >
                 状态:
-                    <label >
+            <label >
                     <input type="radio" value={1} onChange={this.changeStatus.bind(this)} checked={this.state.checked == 1} />
                     启用
                     </label>
@@ -42,11 +50,11 @@ export default class StatusBar extends Component {
                     <input type="radio" value={0} onChange={this.changeStatus.bind(this)} checked={this.state.checked == 0} />
                     停用
                     </label>
-                <Button type="primary" onClick={this.handleChangeStatus.bind(this)} style={{ float: 'right', top: '10px' }}>
+                <Button type="primary" disabled={this.props.checked==this.state.checked} onClick={this.handleChangeStatus.bind(this)} style={{ float: 'right', top: '10px' }}>
                     保存
                     </Button>
 
-            </div>
+            </div >
         )
     }
 }
