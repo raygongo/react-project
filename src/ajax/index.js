@@ -1,6 +1,6 @@
 import axios from 'axios'
-const Mock = require('mockjs')
-
+// const Mock = require('mockjs')
+import Qs from 'qs'
 const config = {
 	//请求的接口，在请求的时候，如axios.get(url,config);这里的url会覆盖掉config中的url
 	url: '/user',
@@ -48,7 +48,7 @@ const fetchAjax = options => {
 		const instance = axios.create({
 			baseURL: 'http://localhost:8080/plugin-workbench/',
 			//设置超时时间
-			timeout: 10000,
+			// timeout: 10000,
 		})
 
 		// instance.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -56,9 +56,15 @@ const fetchAjax = options => {
 		/**
 		 * 请求拦截
 		 */
-		instance.interceptors.request.use(req => {
+		instance.interceptors.request.use(config => {
 			document.querySelector("#loading-box").style.display = "block"
-			return req
+			if (config.method === 'post') {
+				config.data = Qs.stringify({
+					...config.data
+				})
+				// config.data = JSON.stringify(config.data)
+			}
+			return config
 		}, err => {
 			return Promise.reject(err)
 		})
@@ -68,7 +74,15 @@ const fetchAjax = options => {
 		 */
 		instance.interceptors.response.use(res => {
 			document.querySelector("#loading-box").style.display = "none"
-			return Mock.mock(res.data)
+			// 这里保证网络连接正确
+			if (res.status === 200) {
+
+				return res.data
+
+			} else {
+				// 网络连接错误
+			}
+
 		}, err => {
 			return Promise.reject(err)
 		})
@@ -77,9 +91,13 @@ const fetchAjax = options => {
 		 */
 		instance(options)
 			.then(response => {
-				const res = response.data
+				if (response.state === "CO2000") {
+					resolve(response.data)
+				} else {
+					// 服务器错误处理
+					alert(response.message)
+				}
 
-				resolve(res)
 			})
 			.catch(err => {
 				document.querySelector("#loading-box").style.display = "none"

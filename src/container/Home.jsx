@@ -1,21 +1,32 @@
 import React, { Component } from 'react'
-import { FeatureBox, AppTip } from '@/components'
+import { FeatureBox } from '@/components'
+import PropTypes from 'prop-types'
 import { Button } from 'antd';
 import http from '@/ajax'
 import classNames from 'classnames'
 import { getHomeList, getModeList, changeMode, getAppTipList } from '@/ajax/api'
 import '@/styles/home.less'
 
-
 const MODE = {
-	list:'pc_list',
-	grid1:'pc_grid_one',
-	grid2:'pc_grid_two',
+	list: 'pc_list',
+	grid1: 'pc_grid_one',
+	grid2: 'pc_grid_two',
 
 }
 
 export default class Home extends Component {
-	
+
+	// static childContextTypes = {
+	// 	getNewHomeData: PropTypes.func
+	// }
+	// getChildContext() {
+	// 	return {
+	// 		updataHomeData: (data) => {
+	// 			console.log(data)
+	// 		}
+	// 	}
+	// }
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -31,7 +42,7 @@ export default class Home extends Component {
 
 	componentDidMount() {
 		http.get(getHomeList, {
-			cn: '20066',
+			cn: window.CONFIG.cn,
 			terminal: 'PC'
 		})
 			.then((data) => {
@@ -65,12 +76,23 @@ export default class Home extends Component {
 		}
 
 	}
+
 	/**
-	 * 监听tipApp传回需要操作的id 进行操作
+	 * 更改每个app时都会重新获取所有数据
+	 * @param {Obj} data 
+	 */
+	updataHomeData(data) {
+
+		data && this.setState({
+			listData: data
+		})
+	}
+	/**
+	 * 监听tipApp传回需要操作的 url pgeico mark name 进行操作
 	 * @param {string} id 
 	 */
-	handelChangeApp(id) {
-		alert(id)
+	handelChangeApp({ url, pgeico, mark, name }) {
+
 		// 发送 请求
 		// 操作成功后 修改tipData 对应数据
 	}
@@ -94,15 +116,15 @@ export default class Home extends Component {
 	 */
 	handelChangeMode(id, type) {
 		http.get(changeMode, {
-			cn: '20066',
+			cn: window.CONFIG.cn,
 			msId: id
-		}).then(({ msid }) => {
+		}).then(({ msId }) => {
 
 			// 取出msId 覆盖
 			this.setState({
 				listData: {
 					...this.state.listData,
-					msid,
+					msId,
 					type,
 				},
 				showModeSelect: false
@@ -112,9 +134,9 @@ export default class Home extends Component {
 	render() {
 		// 确定对应模式class
 		const modeClass = classNames({
-			'wrap':true,
-			'grid-two':this.state.listData.type == MODE.grid1,
-			'grid-one':this.state.listData.type == MODE.grid2,
+			'wrap': true,
+			'grid-two': this.state.listData.type == MODE.grid1,
+			'grid-one': this.state.listData.type == MODE.grid2,
 		})
 		return (
 			<div className={modeClass}>
@@ -122,20 +144,15 @@ export default class Home extends Component {
 					this.state.listData.list.map((item, index) => {
 						return (
 							<FeatureBox
-								onChangeApp={this.handelOpenAppTip.bind(this)}
+								onChangeApp={this.updataHomeData.bind(this)}
+								index={index}
+								msId={this.state.listData.msId}
 								key={`${this.state.type}${index}`}
 								{...item} />
 						)
 					})
 				}
-				{
-					this.state.openAppTip
-						? <AppTip
-							tipData={this.state.tipData}
-							handelChangeApp={this.handelChangeApp}
-							handelClose={() => { this.setState({ openAppTip: false }) }} />
-						: null
-				}
+
 				<div className="mode-setting-btn" onClick={this.handelOpenModeList.bind(this)}></div>
 				{
 					this.state.showModeSelect
@@ -169,10 +186,10 @@ class ModeChange extends Component {
 	handelSubmitMode() {
 		if (this.props.type === this.state.type) {
 			this.props.handelClose()
-		}else{
+		} else {
 			this.props.handelSubmitMode(this.state.id, this.state.type)
 		}
-		
+
 	}
 	render() {
 		return (

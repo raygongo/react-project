@@ -9,3 +9,12 @@ export const changeMode = '/terminal/rest/changeModel'
 
 // 获取小应用
 export const getAppTipList = '/common/getAppStore'
+
+// 新增小应用
+export const addNewApp = '/terminal/rest/saveApp'
+
+// 删除小应用
+export const delApp = '/terminal/rest/deleteApp'
+
+// 修改小应用
+export const editApp = '/terminal/rest/modifyApp'
