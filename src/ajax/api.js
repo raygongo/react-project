@@ -25,3 +25,6 @@ export const addListItem = '/company/saveOther'
 
 // 删除列表或网格模式的配置项
 export const delGirdItem = '/company/delOther'
+
+// 移动端修改展示应用数
+export const changeFrameNum = '/company/changeFrameNum'

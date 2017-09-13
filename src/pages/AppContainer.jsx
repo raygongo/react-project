@@ -32,7 +32,7 @@ export default class AppContainer extends Component {
 
     static childContextTypes = {
         handelOpenAppTip: PropTypes.func,
-        handelUpdateModeData: PropTypes.func,       // 更新数据
+        handelUpdateataByCid: PropTypes.func,       // 更新数据
     }
 
 
@@ -56,7 +56,21 @@ export default class AppContainer extends Component {
     // 利用context 分发 打开appTip的方法
     getChildContext() {
         return {
+            handelUpdateataByCid: ({ cid, mode = 'pc' }) => {
+                http.post(getModeByCid, { cid: cid })
+                    .then(data => {
+                        if (mode == 'pc') {
+                            this.setState({
+                                pcData: data
+                            })
+                        } else if (mode == 'mobile') {
+                            this.setState({
+                                mbData: data
+                            })
+                        }
 
+                    })
+            }
         }
     }
 
@@ -139,10 +153,7 @@ export default class AppContainer extends Component {
                 http.post(getModeByCid, { cid: item.cid })
                     .then(data => {
                         this.setState({
-                            pcData: {
-                                ...item,
-                                list: data
-                            }
+                            pcData: data
                         })
                     })
                 return true
@@ -162,10 +173,7 @@ export default class AppContainer extends Component {
                 http.post(getModeByCid, { cid: item.cid })
                     .then(data => {
                         this.setState({
-                            mbData: {
-                                ...item,
-                                list: data
-                            }
+                            mbData: data
                         })
                     })
                 return true
@@ -193,41 +201,50 @@ export default class AppContainer extends Component {
             id: parseInt(cid)
         }).then(data => {
             message.success('修改成功')
-            // 如果是启用 需要 更改其他模式为停用
-            let pc = this.state.backPcData
-            if (state == 1) {
-                // 修改menuList 的check属性
-                this.setState({
-                    pcCheckedMode: mode
-                })
-                pc.forEach(data => {
-                    if (data.cid == cid) {
-                        data.state = 1
-                    } else {
-                        data.state = 0
-                    }
-                })
-            } else {
-                // 修改menuList 的check属性
-                this.setState({
-                    pcCheckedMode: ''
-                })
-                pc.some(data => {
-                    if (data.cid == cid) {
-                        data.state = 0
-                        return true
-                    }
-                    return false
-                })
-            }
             // 修改当前 显示数据 的状态
             this.setState({
-                backPcData: pc,
                 pcData: {
+
                     ...this.state.pcData,
                     state: state
-                }
+                },
+                pcCheckedMode: parseInt(state) ? mode : '',
             })
+            // // 如果是启用 需要 更改其他模式为停用
+            // let pc = this.state.backPcData
+            // if (state == 1) {
+            //     // 修改menuList 的check属性
+            //     this.setState({
+            //         pcCheckedMode: mode
+            //     })
+            //     pc.forEach(data => {
+            //         if (data.cid == cid) {
+            //             data.state = 1
+            //         } else {
+            //             data.state = 0
+            //         }
+            //     })
+            // } else {
+            //     // 修改menuList 的check属性
+            //     this.setState({
+            //         pcCheckedMode: ''
+            //     })
+            //     pc.some(data => {
+            //         if (data.cid == cid) {
+            //             data.state = 0
+            //             return true
+            //         }
+            //         return false
+            //     })
+            // }
+            // // 修改当前 显示数据 的状态
+            // this.setState({
+            //     backPcData: pc,
+            //     pcData: {
+            //         ...this.state.pcData,
+            //         state: state
+            //     }
+            // })
         })
     }
     /**
@@ -240,40 +257,48 @@ export default class AppContainer extends Component {
             id: parseInt(cid)
         }).then(data => {
             message.success('修改成功')
-            // 如果是启用 需要 更改其他模式为停用
-            let mb = this.state.backMbData
-            if (state == 1) {
-                // 修改menuList 的check属性
-                this.setState({
-                    mbCheckedMode: mode
-                })
-                mb.forEach(data => {
-                    if (data.cid == cid) {
-                        data.state = 1
-                    } else {
-                        data.state = 0
-                    }
-                })
-            } else {
-                // 修改menuList 的check属性
-                this.setState({
-                    mbCheckedMode: ''
-                })
-                mb.some(data => {
-                    if (data.cid == cid) {
-                        data.state = 0
-                        return true
-                    }
-                    return false
-                })
-            }
+            // 修改menuList 的check属性
             this.setState({
-                backMbData: mb,
                 mbData: {
                     ...this.state.mbData,
                     state: state
-                }
+                },
+                mbCheckedMode: parseInt(state) ? mode : '',
             })
+            // // 如果是启用 需要 更改其他模式为停用
+            // let mb = this.state.backMbData
+            // if (state == 1) {
+            //     // 修改menuList 的check属性
+            //     this.setState({
+            //         mbCheckedMode: mode
+            //     })
+            //     mb.forEach(data => {
+            //         if (data.cid == cid) {
+            //             data.state = 1
+            //         } else {
+            //             data.state = 0
+            //         }
+            //     })
+            // } else {
+            //     // 修改menuList 的check属性
+            //     this.setState({
+            //         mbCheckedMode: ''
+            //     })
+            //     mb.some(data => {
+            //         if (data.cid == cid) {
+            //             data.state = 0
+            //             return true
+            //         }
+            //         return false
+            //     })
+            // }
+            // this.setState({
+            //     backMbData: mb,
+            //     mbData: {
+            //         ...this.state.mbData,
+            //         state: state
+            //     }
+            // })
         })
     }
 

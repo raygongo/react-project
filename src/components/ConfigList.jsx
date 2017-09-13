@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, notification } from 'antd';
+import { Button, Modal, notification, Input } from 'antd';
 import classNames from 'classnames'
 import http from '@/ajax'
-import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem } from '@/ajax/api'
-import { AppTip } from '@/components';
+import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem, changeFrameNum } from '@/ajax/api'
+import { AppTip, NumberInput } from '@/components';
 import { message } from 'antd';
 
 const confirm = Modal.confirm;
@@ -38,9 +38,7 @@ export default class ConfigList extends Component {
 }
 
 class ConfigGridItem extends Component {
-    static contextTypes = {
-        handelOpenAppTip: PropTypes.func
-    }
+
     constructor(props) {
         super(props)
         this.state = {
@@ -143,9 +141,25 @@ class ConfigGridItem extends Component {
 }
 
 class ConfigGridList extends Component {
-    // componentWillReceiveProps(listData) {
-    //     this.setState(listData)
-    // }
+    static contextTypes = {
+        handelUpdateataByCid: PropTypes.func
+    }
+    /**
+     * 修改移动端列表模式个数限制
+     * @param {num} number 
+     */
+    handelChangeNumber(number) {
+        http.post(changeFrameNum, {
+            cid: this.props.listData.cid,
+            frameNum: number
+        }).then(data => {
+            // 成功后需要刷新数据
+            this.context.handelUpdateataByCid({
+                cid: this.props.listData.cid,
+                mode: 'mobile'
+            })
+        })
+    }
     render() {
         // 模式是list样式 判断是否为网格模式 添加不同的样式
         const typeClass = classNames({
@@ -154,6 +168,12 @@ class ConfigGridList extends Component {
         })
         return (
             <div className={typeClass} style={{ height: '100%', padding: 20 }}>
+                {
+                    this.props.listData.type === 'mob_list'
+                        ? <NumberInput number={this.props.listData.frameNum} handleBlurChange={this.handelChangeNumber.bind(this)} />
+                        : null
+                }
+
                 {this.props.listData.list.map((itemConfig, index) => <ConfigGridItem
                     key={index}
                     {...itemConfig}
@@ -166,9 +186,6 @@ class ConfigGridList extends Component {
 }
 
 class ConfigSingleList extends Component {
-    static contextTypes = {
-        handelUpdateModeData: PropTypes.func
-    }
 
     constructor(props) {
         super(props)
@@ -221,7 +238,7 @@ class ConfigSingleList extends Component {
     handelSaveConfigItem({ state, props }) {
         if (!state.staff.length || !state.url.length) {
             notification.warning({
-                message: state.url.length?'请选择人员!':'请填写链接地址!',
+                message: state.url.length ? '请选择人员!' : '请填写链接地址!',
                 // description: '链接地址或人员不能为空!',
             });
             return
@@ -317,10 +334,6 @@ class ConfigSingleList extends Component {
  *  单页模式下的 item
  */
 class ConfigSingleItem extends Component {
-
-    static contextTypes = {
-        handelUpdateModeData: PropTypes.func
-    }
     constructor(props) {
         super(props)
         this.state = {
@@ -412,10 +425,14 @@ class ConfigSingleItem extends Component {
             callback: (res) => {//点击确定的回调函数，res为返回的结果
                 console.log(this, res)
                 // 取出数据
-                const selectData = res.users.map(({ jid, name, }) => {
-                    return {
-                        cn: jid,
-                        name,
+                const selectData = []
+                res.users.forEach(({ jid, name, }) => {
+                    // 去重
+                    if (!this.state.staff.some(({ cn }) => cn === jid)) {
+                        selectData.push({
+                            cn: jid,
+                            name,
+                        })
                     }
                 })
                 this.setState({

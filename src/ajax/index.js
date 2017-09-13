@@ -2,8 +2,6 @@ import axios from 'axios';
 import Qs from 'qs' 
 import { message } from 'antd';
 
-const Mock = require('mockjs');
-
 // const config = {
 // 	//请求的接口，在请求的时候，如axios.get(url,config);这里的url会覆盖掉config中的url
 // 	// url: '/user',
