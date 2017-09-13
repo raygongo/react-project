@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, notification, Input } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import classNames from 'classnames'
 import http from '@/ajax'
 import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem, changeFrameNum } from '@/ajax/api'

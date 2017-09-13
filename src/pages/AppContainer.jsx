@@ -10,8 +10,6 @@ import {
     Tabs,
     TabPane,
     StatusBar,
-    // ConfigModal
-    // AppTip
 } from '@/components'
 
 /**
@@ -47,23 +45,26 @@ export default class AppContainer extends Component {
             },
             openAppTip: false,
             tipData: [],
-            pcCheckedMode: '',    // pc 端 启用的模式
-            mbCheckedMode: '',    // 移动 端 启用的模式
+            pcCheckedMode: '',             // pc 端 启用的模式
+            mbCheckedMode: '',             // 移动 端 启用的模式
             backPcData: [],                // 备份pc端数据
             backMbData: [],                // 备份mobile数据
         }
     }
-    // 利用context 分发 打开appTip的方法
+    
     getChildContext() {
         return {
+            /**
+             * 刷新对应菜单数据
+             */
             handelUpdateataByCid: ({ cid, mode = 'pc' }) => {
                 http.post(getModeByCid, { cid: cid })
                     .then(data => {
-                        if (mode == 'pc') {
+                        if (mode === 'pc') {
                             this.setState({
                                 pcData: data
                             })
-                        } else if (mode == 'mobile') {
+                        } else if (mode === 'mobile') {
                             this.setState({
                                 mbData: data
                             })
@@ -79,27 +80,26 @@ export default class AppContainer extends Component {
         this.getTerminalMode()
     }
 
-    // 获取终端模式
+    /**
+     * 获取终端模式
+     */
     getTerminalMode() {
 
         // 获取pc端的 数据 并挂载到state上
         http.post(findTerminalAll, {
-            orgId: '200196',
+            orgId: window.CONFIG.ORG_ID,
             terminal: 'PC'
         })
             .then(data => {
                 // 找出对应的数据 单页 列表网格
                 data.forEach(item => {
-                    switch (item.type) {
-                        case PC.single:
-                            this.setState({
-                                pcData: { ...item }
-                            })
-                            break;
+                    if (item.type === PC.single) {
+                        this.setState({
+                            pcData: { ...item }
+                        })
                     }
                     // 找出选中模式
                     if (item.state === 1) {
-
                         this.setState({
                             pcCheckedMode: item.type
                         })
@@ -113,19 +113,17 @@ export default class AppContainer extends Component {
 
         // 获取移动端初始数据
         http.post(findTerminalAll, {
-            orgId: '200196',
+            orgId: window.CONFIG.ORG_ID,
             terminal: 'MOBILE'
         })
             .then(data => {
                 data.forEach(item => {
-                    switch (item.type) {
-                        case MOBILE.single:
-                            this.setState({
-                                mbData: {
-                                    ...item
-                                }
-                            })
-                            break
+                    if (item.type === MOBILE.single) {
+                        this.setState({
+                            mbData: {
+                                ...item
+                            }
+                        })
                     }
                     // 找出移动端选中的模式
                     if (item.state === 1) {
@@ -183,22 +181,16 @@ export default class AppContainer extends Component {
     }
 
     /**
-     * 更换app
-     */
-    handelChangeApp(id, title) {
-        // 接受到要被更改的app的id 和名字 
-        // 从数组中找出来 进行更改
-
-    }
-
-    /**
-     *  pc端状态的 启用与禁用
+     * pc端状态的 启用与禁用
+     * @param {*} state 
+     * @param {*} cid 
+     * @param {*} mode 
      */
     changeModeStatus(state, cid, mode) {
         // 1.发送请求
         http.post(changeStateAPI, {
-            state: parseInt(state),
-            id: parseInt(cid)
+            state: window.parseInt(state),
+            id: window.parseInt(cid)
         }).then(data => {
             message.success('修改成功')
             // 修改当前 显示数据 的状态
@@ -208,53 +200,22 @@ export default class AppContainer extends Component {
                     ...this.state.pcData,
                     state: state
                 },
-                pcCheckedMode: parseInt(state) ? mode : '',
+                pcCheckedMode: window.parseInt(state) ? mode : '',
             })
-            // // 如果是启用 需要 更改其他模式为停用
-            // let pc = this.state.backPcData
-            // if (state == 1) {
-            //     // 修改menuList 的check属性
-            //     this.setState({
-            //         pcCheckedMode: mode
-            //     })
-            //     pc.forEach(data => {
-            //         if (data.cid == cid) {
-            //             data.state = 1
-            //         } else {
-            //             data.state = 0
-            //         }
-            //     })
-            // } else {
-            //     // 修改menuList 的check属性
-            //     this.setState({
-            //         pcCheckedMode: ''
-            //     })
-            //     pc.some(data => {
-            //         if (data.cid == cid) {
-            //             data.state = 0
-            //             return true
-            //         }
-            //         return false
-            //     })
-            // }
-            // // 修改当前 显示数据 的状态
-            // this.setState({
-            //     backPcData: pc,
-            //     pcData: {
-            //         ...this.state.pcData,
-            //         state: state
-            //     }
-            // })
         })
     }
+
     /**
      * 移动端 状态的启用与停用
+     * @param {*} state 
+     * @param {*} cid 
+     * @param {*} mode 
      */
     changeMobileStatus(state, cid, mode) {
         // 发送请求 修改状态
         http.post(changeStateAPI, {
-            state: parseInt(state),
-            id: parseInt(cid)
+            state: window.parseInt(state),
+            id: window.parseInt(cid)
         }).then(data => {
             message.success('修改成功')
             // 修改menuList 的check属性
@@ -263,42 +224,8 @@ export default class AppContainer extends Component {
                     ...this.state.mbData,
                     state: state
                 },
-                mbCheckedMode: parseInt(state) ? mode : '',
+                mbCheckedMode: window.parseInt(state) ? mode : '',
             })
-            // // 如果是启用 需要 更改其他模式为停用
-            // let mb = this.state.backMbData
-            // if (state == 1) {
-            //     // 修改menuList 的check属性
-            //     this.setState({
-            //         mbCheckedMode: mode
-            //     })
-            //     mb.forEach(data => {
-            //         if (data.cid == cid) {
-            //             data.state = 1
-            //         } else {
-            //             data.state = 0
-            //         }
-            //     })
-            // } else {
-            //     // 修改menuList 的check属性
-            //     this.setState({
-            //         mbCheckedMode: ''
-            //     })
-            //     mb.some(data => {
-            //         if (data.cid == cid) {
-            //             data.state = 0
-            //             return true
-            //         }
-            //         return false
-            //     })
-            // }
-            // this.setState({
-            //     backMbData: mb,
-            //     mbData: {
-            //         ...this.state.mbData,
-            //         state: state
-            //     }
-            // })
         })
     }
 
@@ -351,14 +278,7 @@ export default class AppContainer extends Component {
                         </div>
                     </TabPane>
                 </Tabs>
-                {/* {
-                    this.state.openAppTip
-                        ? <AppTip
-                            tipData={this.state.tipData}
-                            handelChangeApp={this.handelChangeApp}
-                            handelClose={() => { this.setState({ openAppTip: false }) }} />
-                        : null
-                } */}
+
             </div>
         )
     }
