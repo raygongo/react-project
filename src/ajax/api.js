@@ -1,8 +1,11 @@
 // 获取工作台模式列表
 export const findTerminalAll = '/company/findTerminalAll'; 
 
-// 新增或修改单页模式内容
-export const saveModifyPage = '/company/saveModifyPage'
+// 修改单页模式内容
+export const saveModifyPage = '/company/modifyPage'
+
+// 新增单页模式内容
+export const addModifyPage = '/company/savePage'
 
 // 状态的启用||停用
 export const changeStateAPI = '/company/changeState'

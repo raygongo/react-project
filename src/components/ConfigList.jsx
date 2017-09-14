@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal, notification } from 'antd';
 import classNames from 'classnames'
 import http from '@/ajax'
-import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem, changeFrameNum } from '@/ajax/api'
+import { saveModifyPage, delSingleItem, editListItem, addListItem, delGirdItem, changeFrameNum, addModifyPage } from '@/ajax/api'
 import { AppTip, NumberInput } from '@/components';
 import { message } from 'antd';
 
@@ -186,13 +186,21 @@ class ConfigGridList extends Component {
 }
 
 class ConfigSingleList extends Component {
-
+    static contextTypes = {
+        handelUpdateataByCid: PropTypes.func
+    }
     constructor(props) {
         super(props)
         this.state = {
             listData: this.props.listData
         }
     }
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            listData: nextProps.listData
+        })
+    }
+
     getItems() {
         return this.state.listData.list.map((itemData, index) => {
             let staff = []
@@ -236,35 +244,47 @@ class ConfigSingleList extends Component {
      * 保存配置项
      */
     handelSaveConfigItem({ state, props }) {
-        if (!state.staff.length || !state.url.length) {
+        if (!state.url.length) {
             notification.warning({
-                message: state.url.length ? '请选择人员!' : '请填写链接地址!',
+                message: '请填写链接地址!',
                 // description: '链接地址或人员不能为空!',
             });
             return
         }
 
+        let url = state.id ? saveModifyPage : addModifyPage
 
-        http.post(saveModifyPage, {
+        let params = {
             id: state.id,
             uid: this.state.listData.uid,
             url: state.url,
             auth: JSON.stringify((state.staff.map(({ cn }) => cn)))
-        })
+        }
+        if (state.id) {
+            delete params.id
+        }
+
+        http.post(url, params)
             .then(data => {
                 // 提示
                 message.success('编辑成功')
-                // 修改数据
-                let list = this.state.listData.list
-                list.splice(props.index, 1, Object.assign({}, list[props.index],
-                    { isEdit: false, url: state.url, id: data, staff: state.staff, authInfo: '' }))
 
-                this.setState({
-                    listData: {
-                        ...this.state.listData,
-                        list: list
-                    }
+                // 发送请求刷新数据 
+                this.context.handelUpdateataByCid({
+                    cid: this.props.listData.cid,
+                    mode: 'pc'
                 })
+                // 本地修改数据
+                // let list = this.state.listData.list
+                // list.splice(props.index, 1, Object.assign({}, list[props.index],
+                //     { isEdit: false, url: state.url, id: data, staff: state.staff, authInfo: '' }))
+
+                // this.setState({
+                //     listData: {
+                //         ...this.state.listData,
+                //         list: list
+                //     }
+                // })
 
             })
     }
@@ -377,36 +397,15 @@ class ConfigSingleItem extends Component {
     }
 
     /**
-     * 保存配置
-     */
-    handleSaveConfig() {
-
-        http.post(saveModifyPage, {
-            id: this.state.id,
-            uid: this.props.uid,
-            url: this.state.url,
-            auth: JSON.stringify((this.state.staff.map(({ cn }) => cn)))
-        })
-            .then(data => {
-                // 提示
-                message.success('编辑成功')
-                // 退出编辑模式
-                this.setState({
-                    isEdit: false,
-                    id: data
-                })
-            })
-    }
-    /**
      * 调用组织架构选择器
      */
     handelOpenObjSelector() {
         window.$.objSelector({
-            companyId: 200215,//当前企业ID，必填
+            companyId: window.CONFIG.ORG_ID,//当前企业ID，必填
             type: "background",
             imgBasePath: "",//图片相对于当前项目到objselector目录的相对路径地址
             // picAddr:/*picAddr*/ + "http://192.168.1.14:55123/IMFileServer/ftp/file",
-            personId: "20058",//当前人员ID，必填
+            personId: window.CONFIG.CN,//当前人员ID，必填
             token: 11111,//token，必填
             selectDept: false,//是否可以选择整个部门，默认true
             selectGroup: false,//是否可以选择整个工作组，默认true
@@ -420,8 +419,8 @@ class ConfigSingleItem extends Component {
             dealJid: true,//是否处理jid，如果这样该值为true，则返回的数据会将jid的@部分去掉，原jid会保存为exJid
             //initData:initData,//已选择的数据，该数据要严格按照上面的格式书写，如果dealJid为true，则users中的jid须去掉@后面的部分
             // alert: $.alert,//你自己想要的弹出框的方法，该方法要求只传一条信息，如：alert("sfr234")，默认为alert
-            maxSelect: { num: 5, unit: "人", msg: "不能选择超过5人的项目" },//最大选择数的限制，num为最大数量，如果该值为0或maxSelect为空或空对象，将不限制最大选择数量,unit，为单位，msg为超过最大选择限制的提示信息
-            dataUrl: "http://localhost:8080/plugin-workbench/rest/redirect?url=pweb",//数据源的服务器地址以及项目地址，例：http://192.168.1.12:7001/ServerConsole/service/IMPortalService    ps：最后不要"/"
+            maxSelect: {},//{ num: 5, unit: "人", msg: "不能选择超过5人的项目" },//最大选择数的限制，num为最大数量，如果该值为0或maxSelect为空或空对象，将不限制最大选择数量,unit，为单位，msg为超过最大选择限制的提示信息
+            dataUrl: window.CONFIG.dataUrl,//数据源的服务器地址以及项目地址，例：http://192.168.1.12:7001/ServerConsole/service/IMPortalService    ps：最后不要"/"
             callback: (res) => {//点击确定的回调函数，res为返回的结果
                 console.log(this, res)
                 // 取出数据
